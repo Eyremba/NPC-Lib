@@ -1,3 +1,9 @@
+/* 
+ * This is the main class, at the moment you are able to create basic NPC's.
+ * The only problem I'm facing now is that an npc will not be shown to a player that dies/just joined.
+ * (because the npc-packet doesn't get transmitted, now I need to find a good way to do this without eating
+ * all the server resources)
+ */
 package common.captainbern.npclib;
 
 import java.util.ArrayList;
