@@ -49,6 +49,13 @@ public class LazyPacket {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Returns the packet-object.
+	 */
+	public Object getPacketObject(){
+		return this.crafted_packet;
+	}
 
 	/**
 	 * Method used to send the packet to specified player.
