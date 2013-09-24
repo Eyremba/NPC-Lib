@@ -187,14 +187,6 @@ public class NPC extends Object{
 		datawatcher.write(1, (Object) (short) 0);
 		datawatcher.write(8, (Object) (byte) 0);
 		packet.setPrivateValue("i", datawatcher.getDataWatcherObject());
-
-
-		if(asleep){
-			sleep();
-		}else{
-			sendPacket(packet);
-			wakeUp();
-		}
 	}
 	//------------------
 
