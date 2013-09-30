@@ -54,6 +54,7 @@ public class NPC extends Object{
 
 	public void setItemInHand(ItemStack itemstack){
 		this.iteminhand = itemstack;
+		update();
 	}
 
 	public ItemStack getItemInHand(){
