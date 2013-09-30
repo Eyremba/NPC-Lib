@@ -69,7 +69,7 @@ public class NPCManager {
 	}
 	
 	/**
-	 * Retruns a npc by it's id.
+	 * Returns a npc by it's id.
 	 */
 	public NPC getNpcById(int id){
 		if(npcIDS.containsKey(id)){
