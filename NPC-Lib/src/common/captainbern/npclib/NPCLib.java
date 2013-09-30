@@ -26,7 +26,9 @@ public class NPCLib extends JavaPlugin{
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new PlayerJoinListener(), this);
 		
-		//check for protocolLib
+		/**
+		 * Check for ProtocolLib, if it is present then use that; else use my own fancy packet listener/writer
+		 */
 		if(pm.isPluginEnabled("ProtocolLib")){
 			log("Found ProtocolLib! Using that to hook player connection...");
 			usePL = true;

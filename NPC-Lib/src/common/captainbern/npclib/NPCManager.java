@@ -9,7 +9,7 @@ package common.captainbern.npclib;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 import common.captainbern.npclib.entity.NPC;
@@ -31,7 +31,7 @@ public class NPCManager {
 
 	public NPC createNpc(String name, Location location){
 		if(npcNAMES.containsKey(name)){
-			Bukkit.getLogger().warning("There already exists an NPC with the name: " + name + "!");
+			NPCLib.instance.log(ChatColor.RED + "There already exists an NPC with the name: " + name + "!");
 			return null;
 		}
 		
