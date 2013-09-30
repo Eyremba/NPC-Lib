@@ -6,9 +6,8 @@
  */
 package common.captainbern.npclib;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,35 +16,64 @@ import common.captainbern.npclib.entity.NPC;
 
 public class NPCManager {
 	
-	private HashMap<String, NPC> npc_by_name = new HashMap<String, NPC>();
-	private List<NPC> npcs = new ArrayList<NPC>();
+	/**
+	 * We will use a LinkedList instead of an ArrayList since a LinkedList is faster and can't contain 2 times the
+	 * same value. (May change to arraylist in the future, who knows?)
+	 */
+	private LinkedList<NPC> npcs = new LinkedList<NPC>();
 	
-	private int id = 123456789;
+	private ConcurrentHashMap<Integer, NPC> npcIDS = new ConcurrentHashMap<Integer, NPC>();
+	private ConcurrentHashMap<String, NPC> npcNAMES = new ConcurrentHashMap<String, NPC>();
 	
 	public NPCManager(){
 		
 	}
 
 	public NPC createNpc(String name, Location location){
-		if(npc_by_name.containsKey(name)){
+		if(npcNAMES.containsKey(name)){
 			Bukkit.getLogger().warning("There already exists an NPC with the name: " + name + "!");
 			return null;
 		}
-		int entityid = id += 1;
+		
+		int id = getNextID();
 		
 		NPC npc = new NPC(name, location);
-		npc.setId(entityid);
+		npc.setId(id);
 		npc.update();
 		
 		npcs.add(npc);
-		npc_by_name.put(npc.getName(), npc);
+		
+		npcNAMES.put(npc.getName(), npc);
+		npcIDS.put(id, npc);
 		
 		return npc;
 	}
 	
+	/**
+	 * Returns a fancy (unique) ID for the NPC.
+	 */
+	protected int nextID = Integer.MIN_VALUE;
+	public int getNextID(){
+		return nextID++;
+	}
+	
+	/**
+	 * Returns a npc by it's name.
+	 */
 	public NPC getNpcByName(String name){
-		if(npc_by_name.containsKey(name)){
-			return npc_by_name.get(name);
+		if(npcNAMES.containsKey(name)){
+			return npcNAMES.get(name);
+		}else{
+			return null;
+		}
+	}
+	
+	/**
+	 * Retruns a npc by it's id.
+	 */
+	public NPC getNpcById(int id){
+		if(npcIDS.containsKey(id)){
+			return npcIDS.get(id);
 		}else{
 			return null;
 		}
