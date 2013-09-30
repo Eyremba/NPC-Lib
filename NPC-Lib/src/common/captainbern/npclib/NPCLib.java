@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import common.captainbern.npclib.internal.ProtocolLibHook;
 import common.captainbern.npclib.listener.PlayerJoinListener;
 
 public class NPCLib extends JavaPlugin{
@@ -15,7 +16,7 @@ public class NPCLib extends JavaPlugin{
 	public boolean usePL = false;
 	
 	public void onDisable(){
-		
+		npcmanager.despawnAll();
 	}
 	
 	public void onEnable(){
@@ -27,11 +28,12 @@ public class NPCLib extends JavaPlugin{
 		pm.registerEvents(new PlayerJoinListener(), this);
 		
 		/**
-		 * Check for ProtocolLib, if it is present then use that; else use my own fancy packet listener/writer
+		 * Check for ProtocolLib, if it is present then use that.
 		 */
 		if(pm.isPluginEnabled("ProtocolLib")){
-			log("Found ProtocolLib! Using that to hook player connection...");
+			log(ChatColor.GREEN + "Found ProtocolLib! Using that to listen for incomming packets...");
 			usePL = true;
+			(new ProtocolLibHook()).setUpInteractListener();
 		}
 	}
 	

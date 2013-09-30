@@ -78,4 +78,15 @@ public class NPCManager {
 			return null;
 		}
 	}
+
+	/**
+	 * Used to despawn all NPC's when the plugin get's disabled
+	 */
+	protected void despawnAll() {
+		for(NPC npc : npcs){
+			npcIDS.remove(npc.getId());
+			npcNAMES.remove(npc.getName());
+			npc.destroy();
+		}
+	}
 }
