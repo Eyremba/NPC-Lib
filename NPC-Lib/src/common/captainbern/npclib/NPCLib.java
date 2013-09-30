@@ -10,6 +10,7 @@ import common.captainbern.npclib.listener.PlayerJoinListener;
 public class NPCLib extends JavaPlugin{
 	
 	public static NPCLib instance;
+	private NPCManager npcmanager;
 	
 	public boolean usePL = false;
 	
@@ -20,6 +21,7 @@ public class NPCLib extends JavaPlugin{
 	public void onEnable(){
 		
 		instance = this;
+		npcmanager = new NPCManager();
 		
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new PlayerJoinListener(), this);
@@ -29,6 +31,10 @@ public class NPCLib extends JavaPlugin{
 			log("Found ProtocolLib! Using that to hook player connection...");
 			usePL = true;
 		}
+	}
+	
+	public NPCManager getNPCManager(){
+		return npcmanager;
 	}
 	
 	public void log(String message){
