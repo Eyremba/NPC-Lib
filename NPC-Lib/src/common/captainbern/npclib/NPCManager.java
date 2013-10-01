@@ -53,7 +53,7 @@ public class NPCManager {
 	 * Returns a fancy (unique) ID for the NPC.
 	 */
 	protected int nextID = Integer.MIN_VALUE;
-	public int getNextID(){
+	private int getNextID(){
 		return nextID++;
 	}
 	
