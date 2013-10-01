@@ -6,7 +6,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import common.captainbern.npclib.internal.ProtocolLibHook;
-import common.captainbern.npclib.listener.PlayerJoinListener;
+import common.captainbern.npclib.listener.PlayerListener;
 
 public class NPCLib extends JavaPlugin{
 	
@@ -25,7 +25,7 @@ public class NPCLib extends JavaPlugin{
 		npcmanager = new NPCManager();
 		
 		PluginManager pm = Bukkit.getPluginManager();
-		pm.registerEvents(new PlayerJoinListener(), this);
+		pm.registerEvents(new PlayerListener(), this);
 		
 		/**
 		 * Check for ProtocolLib, if it is present then use that.
