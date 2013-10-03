@@ -57,7 +57,7 @@ public notSoCoolMethod()
 }
 ```
 
-I hate it when code looks like that! Sopmetimes it looks nice but in this case it won't.
+I hate it when code looks like that! Sometimes it looks nice but in this case it won't.
 Code that is written like this will *not* get pulled.
 
 Also, you can documentate your code. You're free to choose, if you won't, okay then. If you do, cool.
