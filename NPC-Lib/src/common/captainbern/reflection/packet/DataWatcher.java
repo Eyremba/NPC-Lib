@@ -1,4 +1,4 @@
-package common.captainbern.npclib.wrapper;
+package common.captainbern.reflection.packet;
 
 import java.lang.reflect.Method;
 
