@@ -14,10 +14,9 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PlayerHook {
-	
-	private Queue inboundQueue = new ConcurrentLinkedQueue();
-    private final Map<Class<?>, Field> fieldMap = new HashMap<Class<?>, Field>();
 
+    private Queue inboundQueue = new ConcurrentLinkedQueue();
+    private final Map<Class<?>, Field> fieldMap = new HashMap<Class<?>, Field>();
 
     /**
      * While this code needs a lot of optimization though I got it to work (hooray for me! :D )
@@ -27,45 +26,48 @@ public class PlayerHook {
      * without the help of Comphenix aka Christian aka aadnk, he, without himself realizing it, teached me a lot
      * about packets and java. Thank you for all the help Comphenix!
      */
-	public void hookPlayer(Player player, boolean joining){
-		Object nm = getNetworkManager(player);
+    public void hookPlayer(Player player, boolean joining){
+        Object nm = getNetworkManager(player);
         Class<?> clazz = nm.getClass();
 
-        WrappedQueue newQueue = new WrappedQueue(player, null);
-        Field field = null;
         try {
-            for(Field f : clazz.getDeclaredFields()){
-                System.out.print("Field=" + f.toString());
 
-                if(f.getName().equals("inboundQueue")){
-                    NPCLib.instance.log(ChatColor.GOLD + "Found inboundQueue Field! Yippie Kayee!");
-                    f.setAccessible(true);
-                    ConcurrentLinkedQueue oldQueue  = (ConcurrentLinkedQueue) f.get(nm);
+            Field f = clazz.getDeclaredField("inboundQueue");
+            f.setAccessible(true);
 
-                    //swap fields
-                    Field lock = clazz.getDeclaredField("h");
-                    lock.setAccessible(true);
-                    lock.get(nm);
-                    synchronized (lock){
-                        newQueue.addAll(oldQueue);
-                        oldQueue.clear();
-                    }
+            ConcurrentLinkedQueue oldQueue  = (ConcurrentLinkedQueue) f.get(nm);
+            WrappedQueue newQueue = null;
 
-                    /**
-                     * Replace the old queue by the new queue
-                     */
-                    f.set(nm, newQueue);
-                }
+            if(joining && !(oldQueue instanceof  WrappedQueue)){
+                newQueue = new WrappedQueue(player);
             }
+            if(!joining && (oldQueue instanceof  WrappedQueue)){
+                newQueue = (WrappedQueue) oldQueue;
+            }
+            if(newQueue != null){
+                Field lock = clazz.getDeclaredField("h");
+                lock.setAccessible(true);
+                lock.get(nm);
+                synchronized (lock){
+                    newQueue.addAll(oldQueue);
+                    oldQueue.clear();
+                }
+
+                f.set(nm, newQueue);
+            }else{
+                NPCLib.instance.log(ChatColor.RED + "Could not hook player {" + player.getName() + "}");
+            }
+
         } catch (Exception e) {
+            NPCLib.instance.log(ChatColor.RED + "A problem was encountered while trying to hook into player: {" + player.getName() + "}");
             e.printStackTrace();
         }
     }
 
     /**
-     * Return the NetworkManager of a player
+     * Returns the NetworkManager of a player
      */
-	private Object getNetworkManager(Player player){
+    private Object getNetworkManager(Player player){
         try{
             Object playerConnection = getPlayerConnection(player);
             Object networkmanager = playerConnection.getClass().getField("networkManager").get(playerConnection);
@@ -75,33 +77,33 @@ public class PlayerHook {
             e.printStackTrace();
             return null;
         }
-	}
+    }
 
     /**
      * Returns the PlayerConnection of a player
      */
-	private Object getPlayerConnection(Player player){
-		try{
-		Object nms = playerToNMS(player);
-		Object playerConnection = nms.getClass().getField("playerConnection").get(nms);
-		return playerConnection;
-		}catch(Exception e){
-			NPCLib.instance.log(ChatColor.RED + "Could not retrieve player: " + player.getName() + "'s playerConnection!");
-			return null;
-		}
-	}
+    private Object getPlayerConnection(Player player){
+        try{
+            Object nms = playerToNMS(player);
+            Object playerConnection = nms.getClass().getField("playerConnection").get(nms);
+            return playerConnection;
+        }catch(Exception e){
+            NPCLib.instance.log(ChatColor.RED + "Could not retrieve player: " + player.getName() + "'s playerConnection!");
+            return null;
+        }
+    }
 
     /**
      * Used to convert a bukkit player to EntityPlayer
      */
-	private Object playerToNMS(Player player){
-		Object entityPlayer = null;
-		try{
-		entityPlayer = ReflectionUtil.getMethod("getHandle", player.getClass(), 0).invoke(player);
-		}catch(Exception e){
-			NPCLib.instance.log(ChatColor.RED + "Could not convert player: " + player.getName() + " from bukkit to NMS Entity!");
-			return null;
-		}
-		return entityPlayer;
-	}
+    private Object playerToNMS(Player player){
+        Object entityPlayer = null;
+        try{
+            entityPlayer = ReflectionUtil.getMethod("getHandle", player.getClass(), 0).invoke(player);
+        }catch(Exception e){
+            NPCLib.instance.log(ChatColor.RED + "Could not convert player: " + player.getName() + " from bukkit to NMS Entity!");
+            return null;
+        }
+        return entityPlayer;
+    }
 }

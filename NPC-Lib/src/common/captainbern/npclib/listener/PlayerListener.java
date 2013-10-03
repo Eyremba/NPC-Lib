@@ -1,5 +1,7 @@
 package common.captainbern.npclib.listener;
 
+import common.captainbern.npclib.NPCLib;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -10,12 +12,12 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event){
-		 //hook player connection
+        NPCLib.instance.getPlayerHook().hookPlayer(event.getPlayer(), true);
 	}
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event){
-        //clear player connection stuff
+        NPCLib.instance.getPlayerHook().hookPlayer(event.getPlayer(), false);
     }
 
     @EventHandler
