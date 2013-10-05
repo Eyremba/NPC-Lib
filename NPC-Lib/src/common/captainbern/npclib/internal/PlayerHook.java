@@ -31,7 +31,7 @@ public class PlayerHook {
      * It basically replaces the inboundQueue field in the networkmanager of {@param player} with my
      * WrapperQueue, this wrapperqueue extends the ConcurrentLinkedQueue and just overrides the "add(E)" method
      * so we can start capturing incoming packets. It's a nifty little system but it would never have been possible
-     * without the help of Comphenix aka Christian aka aadnk, he, without himself realizing it, teached me a lot
+     * without the help of Comphenix aka Kristian aka aadnk, he, without himself realizing it, teached me a lot
      * about packets and java. Thank you for all the help Comphenix!
      */
     public void hookPlayer(Player player, boolean joining){
