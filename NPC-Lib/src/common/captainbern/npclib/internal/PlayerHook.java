@@ -1,3 +1,11 @@
+/**
+ * This class is used to hook the player's NetworkManager, to be specific, it's used to hook the
+ * "inboundQueue" field in there. Why? So we can intercept incoming packet without making use of an
+ * external library like protocolLib or BKCommonLib. If you do not understand any of this code
+ * then simply go to this youtube video: http://www.youtube.com/watch?v=ktvTqknDobU&list=RD02cmSbXsFE3l8
+ * After watching it everything will be clear. *No*
+ */
+
 package common.captainbern.npclib.internal;
 
 import common.captainbern.npclib.NPCLib;
@@ -54,6 +62,7 @@ public class PlayerHook {
                 }
 
                 f.set(nm, newQueue);
+                NPCLib.instance.log(ChatColor.GREEN + "Successfully hooked {" + player.getName() + "} NetworkManager. Let the magic happen now.");
             }else{
                 NPCLib.instance.log(ChatColor.RED + "Could not hook player {" + player.getName() + "}");
             }
