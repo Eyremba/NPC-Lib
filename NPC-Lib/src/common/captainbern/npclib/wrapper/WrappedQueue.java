@@ -17,7 +17,7 @@ public class WrappedQueue<E> extends ConcurrentLinkedQueue<E> {
     @Override
     public boolean add(E e){
         //System.out.print("Detected incoming packet! owner = {" + owner.getName() + "}" + " packet = {" + e.getClass().getName() + "}");
-        NPCLib.instance.getPacketHandler().handlePacketAdd(e);
+        NPCLib.instance.getPacketHandler().handlePacketAdd(e, owner);
         return super.add(e);
     }
 
