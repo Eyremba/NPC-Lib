@@ -40,8 +40,15 @@ public class PlayerHook {
 
         try {
 
-            Field f = clazz.getDeclaredField("inboundQueue");
-            f.setAccessible(true);
+            Field f = null;
+
+            try{
+                f = clazz.getDeclaredField("inboundQueue");
+                f.setAccessible(true);
+            }catch(NullPointerException e){
+                NPCLib.instance.log(ChatColor.RED + player.getName() + ChatColor.RED + " has a incompatible NetworkManager!");
+                return;
+            }
 
             ConcurrentLinkedQueue oldQueue  = (ConcurrentLinkedQueue) f.get(nm);
             WrappedQueue newQueue = null;
@@ -62,13 +69,13 @@ public class PlayerHook {
                 }
 
                 f.set(nm, newQueue);
-                NPCLib.instance.log(ChatColor.GREEN + "Successfully hooked {" + player.getName() + "} NetworkManager. Let the magic happen now.");
+                NPCLib.instance.log(ChatColor.GREEN + "Successfully hooked " + player.getName() + "'s NetworkManager. Let the magic happen now.");
             }else{
-                NPCLib.instance.log(ChatColor.RED + "Could not hook player {" + player.getName() + "}");
+                NPCLib.instance.log(ChatColor.RED + "Could not hook player " + player.getName() + "'s NetworkManager. Some stuff may not work now.");
             }
 
         } catch (Exception e) {
-            NPCLib.instance.log(ChatColor.RED + "A problem was encountered while trying to hook into player: {" + player.getName() + "}");
+            NPCLib.instance.log(ChatColor.RED + "A problem was encountered while trying to hook into player: " + player.getName() + "'s NetworkManager.");
             e.printStackTrace();
         }
     }
