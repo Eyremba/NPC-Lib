@@ -1,5 +1,8 @@
 package common.captainbern.npclib.internal;
 
+import common.captainbern.npclib.events.PlayerDamageNpcEvent;
+import common.captainbern.npclib.events.PlayerInteractNpcEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -28,24 +31,20 @@ public class ProtocolLibHook {
 					try {
 						PacketContainer packet = event.getPacket();
 						int target = packet.getSpecificModifier(int.class).read(1);
-
-						/*
-						 * This is something weird; the protocol page states that this is a boolean 
-						 * and when true = left click, when false = right click but the source code 
-						 * states that the action field is an integer; so I'm guessing 0 = right click and 
-						 * 1 = left click (if I'm wrong; feel free to send me a pm on the forums http://forums.bukkit.org/members/captainbern.90729934/ )
-						 */
 						int action = packet.getSpecificModifier(int.class).read(2);
 
-						NPCManager npcm = NPCLib.instance.getNPCManager();
-						if(npcm.getNpcById(target) != null){
-							if(action == 0){
-								//call new "NPCInteractEvent"
-							}else if(action == 1){
-								NPC npc = npcm.getNpcById(target);
-								//npc.hurt();
-							}
-						}
+                        if(NPCLib.instance.getNPCManager().getNpcById(target) != null){
+                            NPC npc = NPCLib.instance.getNPCManager().getNpcById(target);
+                            switch(action){
+                                case 0 :
+                                    PlayerInteractNpcEvent interact_event = new PlayerInteractNpcEvent(player, npc);
+                                    Bukkit.getPluginManager().callEvent(interact_event);
+                                    break;
+                                case 1 :
+                                    PlayerDamageNpcEvent hurt_event = new PlayerDamageNpcEvent(player, npc);
+                                    Bukkit.getPluginManager().callEvent(hurt_event);
+                            }
+                        }
 					} catch (FieldAccessException e) {
 						NPCLib.instance.log(ChatColor.RED + "Could not acces a field in packet 0x07! (used to listen for interaction with npc's!");
 					}
