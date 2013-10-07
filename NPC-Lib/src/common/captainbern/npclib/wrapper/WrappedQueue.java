@@ -1,7 +1,6 @@
 package common.captainbern.npclib.wrapper;
 
 import common.captainbern.npclib.NPCLib;
-import common.captainbern.npclib.listener.PacketHandler;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
