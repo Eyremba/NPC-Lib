@@ -12,8 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import common.captainbern.npclib.internal.ProtocolLibHook;
 import common.captainbern.npclib.listener.PlayerListener;
 
-import java.util.LinkedList;
-
 public class NPCLib extends JavaPlugin{
 	
 	public static NPCLib instance;
@@ -39,10 +37,6 @@ public class NPCLib extends JavaPlugin{
 		if(pm.isPluginEnabled("ProtocolLib")){
 			log(ChatColor.GREEN + "Found ProtocolLib! Using that to listen for incoming packets...");
 			usingProtocolLib = true;
-
-            //register listeners
-            pm.registerEvents(new PlayerListener(), this);
-
             (new ProtocolLibHook()).setUpInteractListener();
 		}
 
@@ -53,8 +47,9 @@ public class NPCLib extends JavaPlugin{
             for(Player player : Bukkit.getOnlinePlayers()){
                 playerHook.hookPlayer(player, true);
             }
+            //register listeners
+            pm.registerEvents(new PlayerListener(), this);
         }
-
 	}
 	
 	public NPCManager getNPCManager(){
