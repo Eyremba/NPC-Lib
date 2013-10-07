@@ -24,9 +24,14 @@ public class NPCManager {
 	
 	private ConcurrentHashMap<Integer, NPC> npcIDS = new ConcurrentHashMap<Integer, NPC>();
 	private ConcurrentHashMap<String, NPC> npcNAMES = new ConcurrentHashMap<String, NPC>();
+
+    private Object lock;
 	
 	public NPCManager(){
-		
+        lock = new Object();
+        synchronized (lock){
+            // more code here
+        }
 	}
 
 	public NPC createNpc(String name, Location location){
