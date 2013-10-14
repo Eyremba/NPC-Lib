@@ -1,10 +1,16 @@
 package common.captainbern.npclib.wrapper.packet;
 
+import common.captainbern.npclib.NPCLib;
+import common.captainbern.reflection.ReflectionUtil;
 import common.captainbern.reflection.packet.DataWatcher;
 import common.captainbern.reflection.packet.LazyPacket;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 public class Packet20NamedEntitySpawn extends LazyPacket {
 
@@ -42,6 +48,20 @@ public class Packet20NamedEntitySpawn extends LazyPacket {
          * The "getId()" method may be deprecated but the original mc-dev still uses this method.
          * If the method eventually gets removed then I will just create a new enum with all id's.
          */
-          super.setPublicValue("h", itemStack == null ? 0 : itemStack.getType().getId());
+        super.setPublicValue("h", itemStack == null ? 0 : itemStack.getType().getId());
+    }
+
+    private Object convertToNMS(ItemStack itemStack){
+        try{
+            Object nms_stack = null;
+
+            Class craftstack = ReflectionUtil.getOBCClassExact("inventory.CraftItemStack");
+            nms_stack = craftstack.getMethod("asNMSCopy").invoke(craftstack, itemStack);
+
+            return nms_stack;
+        }catch(Exception e){
+            NPCLib.instance.log(ChatColor.RED + "Could not convert from bukkit to nms itemstack!");
+            return null;
+        }
     }
 }
