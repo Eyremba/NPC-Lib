@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * THIS CLASS WILL BE REMOVED
+ */
+
 public class PlayerHook {
 
     private Queue inboundQueue = new ConcurrentLinkedQueue();
@@ -44,7 +48,7 @@ public class PlayerHook {
                 f = clazz.getDeclaredField("inboundQueue");
                 f.setAccessible(true);
             }catch(NullPointerException e){
-                NPCLib.instance.log(ChatColor.RED + player.getName() + ChatColor.RED + " has a incompatible NetworkManager!");
+                NPCLib.instance.log(ChatColor.RED + player.getName() + ChatColor.RED + " has an incompatible NetworkManager!");
                 return;
             }
 
