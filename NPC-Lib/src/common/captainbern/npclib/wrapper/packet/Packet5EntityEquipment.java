@@ -1,9 +1,9 @@
 package common.captainbern.npclib.wrapper.packet;
 
 import common.captainbern.npclib.NPCLib;
-import common.captainbern.npclib.entity.NPC;
 import common.captainbern.reflection.ReflectionUtil;
 import common.captainbern.reflection.packet.LazyPacket;
+
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
@@ -11,9 +11,12 @@ import java.lang.reflect.Method;
 
 public class Packet5EntityEquipment extends LazyPacket {
 
-    public Packet5EntityEquipment(NPC npc) {
+    public Packet5EntityEquipment() {
         super("Packet5EntityEquipment");
-        super.setPublicValue("a", npc.getId());
+    }
+
+    public void setEntityID(int id){
+        super.setPublicValue("a", id);
     }
 
     public void setItemInHand(ItemStack itemStack){
@@ -43,11 +46,14 @@ public class Packet5EntityEquipment extends LazyPacket {
 
     private Object convertToNMS(ItemStack itemStack){
         try{
-            Method handle = ReflectionUtil.getMethod("getHandle", itemStack.getClass());
-            Object nms_stack = handle.invoke(itemStack);
+            Object nms_stack = null;
+
+            Class craftstack = ReflectionUtil.getOBCClassExact("inventory.CraftItemStack");
+            nms_stack = craftstack.getMethod("asNMSCopy").invoke(craftstack, itemStack);
+
             return nms_stack;
         }catch(Exception e){
-            NPCLib.instance.log(ChatColor.RED + "Failed to convert Bukkit itemstack to NMS itemstack!");
+            NPCLib.instance.log(ChatColor.RED + "Could not convert from bukkit to nms itemstack!");
             return null;
         }
     }

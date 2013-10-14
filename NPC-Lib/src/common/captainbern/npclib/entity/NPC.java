@@ -1,21 +1,19 @@
 package common.captainbern.npclib.entity;
 
+import common.captainbern.npclib.wrapper.packet.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import common.captainbern.reflection.packet.DataWatcher;
-import common.captainbern.reflection.packet.LazyPacket;
 
-
-public class NPC extends Object{
+public class NPC {
 
     private Location location;
     private int id = 0;
     private String name;
     private ItemStack iteminhand;
-    boolean asleep;
 
     public NPC(String name, Location location){
         try{
@@ -44,7 +42,65 @@ public class NPC extends Object{
         return this.id;
     }
 
-    public void setName(String name){
+    public String getName(){
+        return this.name;
+    }
+
+    /**
+     * Packet stuff starts here
+     */
+
+    public void spawn(){
+        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
+        packet.setId(this.id);
+        packet.setName(this.name);
+        packet.setLocation(this.location);
+        packet.setItemInhand(this.iteminhand);
+
+        for(Player player : Bukkit.getOnlinePlayers()){
+            if(player.getWorld().equals(this.location.getWorld())){
+                packet.send(player);
+            }
+        }
+    }
+
+    public void despawn(){
+        Packet29DestroyEntity packet = new Packet29DestroyEntity(new int[id]);
+        for(Player player : Bukkit.getOnlinePlayers()){
+            packet.send(player);
+        }
+    }
+
+    public void swingArm(){
+        Packet18ArmAnimation packet = new Packet18ArmAnimation();
+        packet.setEntity(this.id);
+        packet.setAction(Packet18ArmAnimation.ACTION_SWING_ARM);
+    }
+
+    public void hurt(){
+        Packet18ArmAnimation packet = new Packet18ArmAnimation();
+        packet.setEntity(this.id);
+        packet.setAction(Packet18ArmAnimation.ACTION_HURT);
+    }
+
+    public void sleep(){
+        Packet17EntityLocationAction packet = new Packet17EntityLocationAction();
+        packet.setEntity(this.id);
+        packet.setAction(Packet17EntityLocationAction.ACTION_SLEEP);
+    }
+
+    public void wakeUp(){
+        Packet18ArmAnimation packet = new Packet18ArmAnimation();
+        packet.setEntity(this.id);
+        packet.setAction(Packet18ArmAnimation.ACTION_WAKE_UP);
+    }
+
+    public void teleport(Location loc){
+        Packet34EntityTeleport packet = new Packet34EntityTeleport();
+        //init
+    }
+
+    /*public void setName(String name){
         this.name = name;
     }
 
@@ -61,9 +117,6 @@ public class NPC extends Object{
         return this.iteminhand;
     }
 
-    /**
-     * Location stuff
-     */
     public void setLocation(Location loc){
         this.location = loc;
         update();
@@ -109,12 +162,6 @@ public class NPC extends Object{
     public double getZ(){
         return getLocation().getZ();
     }
-
-
-    /**
-     * packet stuff
-     */
-
 
     public void doArmSwing(){
         LazyPacket packet = new LazyPacket("Packet18ArmAnimation");
@@ -171,7 +218,7 @@ public class NPC extends Object{
 		/*NpcPacket p = new NpcPacket(this);
 		p.setPublicValue("a", getId());
 		p.setPublicValue("b", getName());
-		sendPacket(p);*/
+		sendPacket(p);
 
         LazyPacket packet = new LazyPacket("Packet20NamedEntitySpawn");
         packet.setPublicValue("a", this.id);
@@ -201,5 +248,5 @@ public class NPC extends Object{
                 packet.send(player);
             }
         }
-    }
+    }*/
 }

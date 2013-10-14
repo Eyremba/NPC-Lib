@@ -9,6 +9,7 @@ package common.captainbern.npclib;
 import common.captainbern.npclib.entity.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +34,7 @@ public class NPCManager {
         }
     }
 
-    public NPC createNpc(String name, Location location){
+    public NPC createNewNPC(String name, Location location){
         if(npcNAMES.containsKey(name)){
             NPCLib.instance.log(ChatColor.RED + "There already exists an NPC with the name: " + name + "!");
             return null;
@@ -41,19 +42,12 @@ public class NPCManager {
 
         int id = getNextID();
 
-        NPC npc = new NPC(name, location);
-        npc.setId(id);
-        npc.update();
-
-        npcs.add(npc);
-
-        npcNAMES.put(npc.getName(), npc);
-        npcIDS.put(id, npc);
+        NPC npc = createNpc(name, location, id);
 
         return npc;
     }
 
-    public NPC createNpc(String name, Location location, int id){
+    private NPC createNpc(String name, Location location, int id){
         if(npcIDS.contains(id)){
             NPCLib.instance.log(ChatColor.RED + "There already exists an NPC with that id, we will return that NPC instead! (" + id + ")");
             return  getNpcById(id);
@@ -65,7 +59,7 @@ public class NPCManager {
 
             NPC npc = new NPC(name, location);
             npc.setId(id);
-            npc.update();
+            //npc.update();
 
             npcs.add(npc);
 
@@ -101,7 +95,7 @@ public class NPCManager {
         for(NPC npc : npcs){
             npcIDS.remove(npc.getId());
             npcNAMES.remove(npc.getName());
-            npc.destroy();
+            npc.despawn();
         }
     }
 }

@@ -23,7 +23,7 @@ public class Packet20NamedEntitySpawn extends LazyPacket {
         super.setPrivateValue("i", datawatcher.getDataWatcherObject());
     }
 
-    public void setId(int id){
+    public void setEntityID(int id){
         super.setPublicValue("a", id);
     }
 
