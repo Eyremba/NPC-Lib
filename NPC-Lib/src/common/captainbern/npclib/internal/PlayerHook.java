@@ -9,7 +9,7 @@
 package common.captainbern.npclib.internal;
 
 import common.captainbern.npclib.NPCLib;
-import common.captainbern.npclib.wrapper.WrappedQueue;
+import common.captainbern.npclib.wrapper.WrapperQueue;
 import common.captainbern.reflection.ReflectionUtil;
 
 import org.bukkit.ChatColor;
@@ -35,11 +35,9 @@ public class PlayerHook {
      * about packets and java. Thank you for all the help Comphenix!
      */
     public void hookPlayer(Player player, boolean joining){
-        Object nm = getNetworkManager(player);
-        Class<?> clazz = nm.getClass();
-
         try {
-
+            Object nm = getNetworkManager(player);
+            Class<?> clazz = nm.getClass();
             Field f = null;
 
             try{
@@ -51,25 +49,27 @@ public class PlayerHook {
             }
 
             ConcurrentLinkedQueue oldQueue  = (ConcurrentLinkedQueue) f.get(nm);
-            WrappedQueue newQueue = null;
+            WrapperQueue newQueue = null;
 
-            if(joining && !(oldQueue instanceof  WrappedQueue)){
-                newQueue = new WrappedQueue(player);
+            if(joining && !(oldQueue instanceof  WrapperQueue)){
+                newQueue = new WrapperQueue(player);
             }
-            if(!joining && (oldQueue instanceof  WrappedQueue)){
-                newQueue = (WrappedQueue) oldQueue;
+            if(!joining && (oldQueue instanceof  WrapperQueue)){
+                newQueue = (WrapperQueue) oldQueue;
             }
             if(newQueue != null){
-                Field lock = clazz.getDeclaredField("h");
-                lock.setAccessible(true);
-                lock.get(nm);
-                synchronized (lock){
-                    newQueue.addAll(oldQueue);
-                    oldQueue.clear();
-                }
+                if(joining){
+                    Field lock = clazz.getDeclaredField("h");
+                    lock.setAccessible(true);
+                    lock.get(nm);
+                    synchronized (lock){
+                        newQueue.addAll(oldQueue);
+                        oldQueue.clear();
+                    }
 
-                f.set(nm, newQueue);
-                NPCLib.instance.log(ChatColor.GREEN + "Successfully hooked " + player.getName() + "'s NetworkManager. Let the magic happen now.");
+                    f.set(nm, newQueue);
+                    NPCLib.instance.log(ChatColor.GREEN + "Successfully hooked " + player.getName() + "'s NetworkManager. Let the magic happen now.");
+                }
             }else{
                 NPCLib.instance.log(ChatColor.RED + "Could not hook player " + player.getName() + "'s NetworkManager. Some stuff may not work now.");
             }
