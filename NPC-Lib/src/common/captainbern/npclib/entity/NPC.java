@@ -52,7 +52,7 @@ public class NPC {
 
     public void spawn(){
         Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
-        packet.setId(this.id);
+        packet.setEntityID(this.id);
         packet.setName(this.name);
         packet.setLocation(this.location);
         packet.setItemInhand(this.iteminhand);
@@ -73,25 +73,25 @@ public class NPC {
 
     public void swingArm(){
         Packet18ArmAnimation packet = new Packet18ArmAnimation();
-        packet.setEntity(this.id);
+        packet.setEntityID(this.id);
         packet.setAction(Packet18ArmAnimation.ACTION_SWING_ARM);
     }
 
     public void hurt(){
         Packet18ArmAnimation packet = new Packet18ArmAnimation();
-        packet.setEntity(this.id);
+        packet.setEntityID(this.id);
         packet.setAction(Packet18ArmAnimation.ACTION_HURT);
     }
 
     public void sleep(){
         Packet17EntityLocationAction packet = new Packet17EntityLocationAction();
-        packet.setEntity(this.id);
+        packet.setEntityID(this.id);
         packet.setAction(Packet17EntityLocationAction.ACTION_SLEEP);
     }
 
     public void wakeUp(){
         Packet18ArmAnimation packet = new Packet18ArmAnimation();
-        packet.setEntity(this.id);
+        packet.setEntityID(this.id);
         packet.setAction(Packet18ArmAnimation.ACTION_WAKE_UP);
     }
 

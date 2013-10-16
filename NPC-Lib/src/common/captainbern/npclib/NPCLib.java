@@ -1,5 +1,6 @@
 package common.captainbern.npclib;
 
+import common.captainbern.npclib.internal.PacketInterceptor;
 import common.captainbern.npclib.internal.PlayerHook;
 
 import common.captainbern.npclib.listener.PacketHandler;
@@ -43,10 +44,11 @@ public class NPCLib extends JavaPlugin{
         if(!usingProtocolLib){
             log(ChatColor.GREEN + "ProtocolLib not detected! So instead we will be using our own methods to listen for incoming packets...");
             packetHandler = new PacketHandler();
-            playerHook = new PlayerHook();
+           /* playerHook = new PlayerHook();
             for(Player player : Bukkit.getOnlinePlayers()){
                 playerHook.hookPlayer(player, true);
-            }
+            }*/
+            new PacketInterceptor(this);
             //register listeners
             pm.registerEvents(new PlayerListener(), this);
         }

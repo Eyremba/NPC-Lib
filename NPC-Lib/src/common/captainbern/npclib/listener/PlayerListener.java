@@ -12,12 +12,12 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event){
-        NPCLib.instance.getPlayerHook().hookPlayer(event.getPlayer(), true);
+       // NPCLib.instance.getPlayerHook().hookPlayer(event.getPlayer(), true);
 	}
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event){
-        NPCLib.instance.getPlayerHook().hookPlayer(event.getPlayer(), false);
+        //NPCLib.instance.getPlayerHook().hookPlayer(event.getPlayer(), false);
     }
 
     @EventHandler

@@ -75,8 +75,26 @@ public class ReflectionUtil {
         return null;
     }
 
+    public static Method getDeclaredMethod(String name, Class<?> c) {
+        for (Method m : c.getDeclaredMethods()) {
+            if (m.getName().equals(name)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
     public static Field getField(String name, Class<?> c) {
         for (Field f : c.getFields()) {
+            if (f.getName().equals(name)) {
+                return f;
+            }
+        }
+        return null;
+    }
+
+    public static Field getDeclaredField(String name, Class<?> c){
+        for (Field f : c.getDeclaredFields()) {
             if (f.getName().equals(name)) {
                 return f;
             }
