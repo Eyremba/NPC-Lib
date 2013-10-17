@@ -50,7 +50,19 @@ public class PacketInterceptor implements Listener{
             inboundQueueField = ReflectionUtil.getDeclaredField("inboundQueue", networkManager.getClass());
         inboundQueueField.setAccessible(true);
 
-        swapped.put(player, new Swapper(inboundQueueField, networkManager, new ProxyQueue(player)).swap());
+        Field lockField = ReflectionUtil.getDeclaredField("h", networkManager.getClass());
+        lockField.setAccessible(true);
+        Object lock = lockField.get(networkManager);
+
+        ConcurrentLinkedQueue oldQueue = (ConcurrentLinkedQueue) inboundQueueField.get(networkManager);
+        ProxyQueue<Object> proxy = new ProxyQueue<Object>(player);
+
+        synchronized (lock){
+            proxy.addAll(oldQueue);
+            oldQueue.clear();
+        }
+
+        swapped.put(player, new Swapper(inboundQueueField, networkManager, proxy).swap());
 
     }
 
