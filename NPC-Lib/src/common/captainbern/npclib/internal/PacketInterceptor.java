@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -32,31 +33,13 @@ public class PacketInterceptor implements Listener{
     private Object networkManager = null;
     private Field inboundQueueField = null;
 
-    private Multimap<Player, PlayerFieldData> swapped = ArrayListMultimap.create();
-
-    private static class PlayerFieldData {
-
-        private final Field field;
-        private final Object target;
-        private  final Object value;
-
-        //used to restore the networkmanager.
-        public PlayerFieldData(Field field, Object target, Object value){
-            this.field = field;
-            this.target = target;
-            this.value = value;
-        }
-
-        public void rollback(){
-            try{
-                field.set(target, value);
-            }catch(Exception e){
-                throw new RuntimeException("Unable to reset the networkmanager" + e);
-            }
-        }
-    }
+    private Multimap<Player, Swapper> swapped = ArrayListMultimap.create();
 
     public void interceptPlayer(Player player) throws Exception{
+        if(!NPCLib.instance.getServer().getName().equalsIgnoreCase("CraftBukkit")){
+            throw new UnsupportedOperationException("We can not detect packets with this server-mod! Please install ProtocolLib!");
+        }
+
         if(swapped.containsKey(player)){
             throw new RuntimeException("Can not inject " + player + " because he is already.");
         }
@@ -66,22 +49,14 @@ public class PacketInterceptor implements Listener{
         if(inboundQueueField == null)
             inboundQueueField = ReflectionUtil.getDeclaredField("inboundQueue", networkManager.getClass());
         inboundQueueField.setAccessible(true);
-        if(!inboundQueueField.get(networkManager).getClass().getSimpleName().equals("ConcurrentLinkedQueue")){
-            throw new RuntimeException("Seems like another plugin is messing around with the networkmanager/packets! Please install ProtocolLib!");
-        }
 
-        ConcurrentLinkedQueue inboundQueue = (ConcurrentLinkedQueue) inboundQueueField.get(networkManager);
+        swapped.put(player, new Swapper(inboundQueueField, networkManager, new ProxyQueue(player)).swap());
 
-        //save swap
-        swapped.put(player, new PlayerFieldData(inboundQueueField, networkManager, inboundQueue));
-
-        //proxy dem!
-        inboundQueueField.set(networkManager, new ProxyQueue(player));
     }
 
     public void unInterceptPlayer(Player player){
-        for(PlayerFieldData data : swapped.removeAll(player)){
-            data.rollback();
+        for(Swapper swap : swapped.removeAll(player)){
+            swap.swap();
         }
     }
 
@@ -93,7 +68,7 @@ public class PacketInterceptor implements Listener{
             try{
                 interceptPlayer(player);
             }catch(Exception e){
-                throw new RuntimeException("Could not inject " + player + e);
+                throw new RuntimeException("Could not inject " + player + e + "\n Please install ProtocolLib!");
             }
         }
     }
@@ -101,8 +76,8 @@ public class PacketInterceptor implements Listener{
     public void shutdownService(){
         HandlerList.unregisterAll(this);
 
-        for(PlayerFieldData data : swapped.values()){
-            data.rollback();
+        for(Swapper swap : swapped.values()){
+            swap.swap();
         }
         swapped.clear();
     }
@@ -119,10 +94,25 @@ public class PacketInterceptor implements Listener{
                         e.printStackTrace();
                     }
                 }
-            });
+            }, 1L);
         }catch(Exception e){
             throw new RuntimeException("Could not inject " + event.getPlayer() + e);
         }
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+            @Override
+            public void run() {
+                for(Swapper swap : swapped.values()){
+                    try{
+                        if(swap.getCurrentValue() != swap.getOldValue()){
+                            plugin.getLogger().warning("");
+                        }
+                    }catch(IllegalAccessException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        },20L);
     }
 
     @EventHandler
@@ -164,6 +154,40 @@ public class PacketInterceptor implements Listener{
         return entityPlayer;
     }
 
+    private static class Swapper{
+
+        private Field inboundQueueField;
+        private Object networkManager;
+        private Object newValue;
+
+        private WeakReference<Object> oldValue;
+
+        public Swapper(Field field, Object manager, Object newValue) throws IllegalAccessException{
+            this.inboundQueueField = field;
+            this.networkManager = manager;
+            this.newValue = newValue;
+
+            oldValue = new WeakReference<Object>(getCurrentValue());
+        }
+
+        private Object getOldValue() throws IllegalAccessException{
+            return oldValue.get();
+        }
+
+        public Object getCurrentValue() throws IllegalAccessException{
+            return inboundQueueField.get(networkManager);
+        }
+
+        public Swapper swap(){
+            try{
+                inboundQueueField.set(networkManager, newValue);
+                return new Swapper(inboundQueueField, networkManager, getOldValue());
+            }catch(IllegalAccessException e){
+                throw new RuntimeException("Could not access/swap field" + e);
+            }
+        }
+    }
+
     private class ProxyQueue<E> extends ConcurrentLinkedQueue<E>{
 
         private Player owner;
@@ -172,9 +196,13 @@ public class PacketInterceptor implements Listener{
             this.owner = player;
         }
 
+        public Player getOwner(){
+            return owner;
+        }
+
         @Override
         public boolean add(E e){
-            System.out.print(e.getClass().getSimpleName());
+            //System.out.print(e.getClass().getSimpleName());
             return super.add(e);
         }
     }
