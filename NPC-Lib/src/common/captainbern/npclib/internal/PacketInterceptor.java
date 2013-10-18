@@ -6,6 +6,7 @@
 package common.captainbern.npclib.internal;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ForwardingQueue;
 import com.google.common.collect.Multimap;
 
 import common.captainbern.npclib.NPCLib;
@@ -21,9 +22,11 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PacketInterceptor implements Listener{
@@ -35,10 +38,7 @@ public class PacketInterceptor implements Listener{
 
     private Multimap<Player, Swapper> swapped = ArrayListMultimap.create();
 
-    public void interceptPlayer(Player player) throws Exception{
-        if(!NPCLib.instance.getServer().getName().equalsIgnoreCase("CraftBukkit")){
-            throw new UnsupportedOperationException("We can not detect packets with this server-mod! Please install ProtocolLib!");
-        }
+    private void interceptPlayer(Player player) throws Exception{
 
         if(swapped.containsKey(player)){
             throw new RuntimeException("Can not inject " + player + " because he is already.");
@@ -55,24 +55,27 @@ public class PacketInterceptor implements Listener{
         Object lock = lockField.get(networkManager);
 
         ConcurrentLinkedQueue oldQueue = (ConcurrentLinkedQueue) inboundQueueField.get(networkManager);
-        ProxyQueue<Object> proxy = new ProxyQueue<Object>(player);
+        ProxyQueue proxy = new ProxyQueue(player, oldQueue);
 
         synchronized (lock){
-            proxy.addAll(oldQueue);
-            oldQueue.clear();
+            proxy.addAll(oldQueue); // Making sure older packets also get processed.
         }
 
         swapped.put(player, new Swapper(inboundQueueField, networkManager, proxy).swap());
 
     }
 
-    public void unInterceptPlayer(Player player){
+    private void unInterceptPlayer(Player player){
         for(Swapper swap : swapped.removeAll(player)){
             swap.swap();
         }
     }
 
     public PacketInterceptor(Plugin plugin){
+        if(!NPCLib.instance.getServer().getName().equalsIgnoreCase("CraftBukkit")){
+            throw new UnsupportedOperationException("We can not detect packets with this server-mod! Please install ProtocolLib!");
+        }
+
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
@@ -117,7 +120,7 @@ public class PacketInterceptor implements Listener{
                 for(Swapper swap : swapped.values()){
                     try{
                         if(swap.getCurrentValue() != swap.getOldValue()){
-                            plugin.getLogger().warning("");
+                            plugin.getLogger().warning("Seems like there is another plugin trying to intercept or block packets.\n Please install ProtocolLib.");
                         }
                     }catch(IllegalAccessException e){
                         e.printStackTrace();
@@ -166,6 +169,10 @@ public class PacketInterceptor implements Listener{
         return entityPlayer;
     }
 
+    public void processPacket(@Nonnull Object e, Player owner){
+          //process packet here...
+    }
+
     private static class Swapper{
 
         private Field inboundQueueField;
@@ -200,12 +207,14 @@ public class PacketInterceptor implements Listener{
         }
     }
 
-    private class ProxyQueue<E> extends ConcurrentLinkedQueue<E>{
+    private class ProxyQueue extends ForwardingQueue<Object>{
 
         private Player owner;
+        private ConcurrentLinkedQueue rootQueue;
 
-        public ProxyQueue(Player player){
-            this.owner = player;
+        public ProxyQueue(Player owner, ConcurrentLinkedQueue rootQueue){
+            this.owner = owner;
+            this.rootQueue = rootQueue;
         }
 
         public Player getOwner(){
@@ -213,9 +222,14 @@ public class PacketInterceptor implements Listener{
         }
 
         @Override
-        public boolean add(E e){
-            //System.out.print(e.getClass().getSimpleName());
+        public boolean add(Object e){
+            processPacket(e, owner);
             return super.add(e);
+        }
+
+        @Override
+        protected Queue<Object> delegate() {
+            return rootQueue;
         }
     }
 }
