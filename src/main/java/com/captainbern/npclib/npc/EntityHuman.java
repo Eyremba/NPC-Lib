@@ -1,16 +1,17 @@
 package com.captainbern.npclib.npc;
 
 import com.captainbern.npclib.wrappers.DataWatcher;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityHuman implements NPC {
 
     private final int id;
-    private String name;
+    private GameProfile profile;
     private Location location;
     private double health;
-
     private ItemStack itemInHand;
     private ItemStack helmet;
     private ItemStack body;
@@ -22,6 +23,10 @@ public class EntityHuman implements NPC {
     public EntityHuman(Location location, String name, int id) {
         this.location = location;
         this.id = id;
+        this.profile = new GameProfile("NPC", name);
+        this.health = 20.0;
+        this.itemInHand = new ItemStack(Material.AIR);
+        this.dataWatcher = null; //change this
     }
 
     @Override
@@ -31,7 +36,7 @@ public class EntityHuman implements NPC {
 
     @Override
     public String getName() {
-        return name;
+        return profile.getName();
     }
 
     @Override
@@ -58,7 +63,7 @@ public class EntityHuman implements NPC {
 
     @Override
     public void setName(String name) {
-        this.name = name;
+        profile = new GameProfile("NPC", name);
     }
 
     @Override
@@ -100,5 +105,10 @@ public class EntityHuman implements NPC {
     @Override
     public void setDataWatcher(DataWatcher dataWatcher) {
 
+    }
+
+    @Override
+    public GameProfile getGameProfile() {
+        return profile;
     }
 }

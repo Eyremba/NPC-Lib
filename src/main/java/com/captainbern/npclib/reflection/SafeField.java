@@ -16,15 +16,7 @@ public class SafeField<T> {
     }
 
     public SafeField(Class<?> clazz, String fieldName) {
-        try {
-            field = clazz.getDeclaredField(fieldName);
-
-            if(!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-        } catch (Exception e) {
-            NPCManager.LOGGER_REFLECTION.warning("Could not create SafeField!");
-        }
+        this.field = ReflectionUtil.getField(clazz, fieldName);
     }
 
     public T get(Object instance) {

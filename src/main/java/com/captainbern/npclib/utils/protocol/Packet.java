@@ -53,4 +53,8 @@ public class Packet {
     public <T> T read(String name) {
         return new SafeField<T>(handle.getClass(), name).get(handle);
     }
+
+    public Object getHandle() {
+        return handle;
+    }
 }

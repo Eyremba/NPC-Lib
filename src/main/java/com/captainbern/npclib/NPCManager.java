@@ -1,5 +1,6 @@
 package com.captainbern.npclib;
 
+import com.captainbern.npclib.injector.PlayerInjector;
 import com.captainbern.npclib.npc.EntityHuman;
 import com.captainbern.npclib.npc.NPC;
 import com.google.common.collect.BiMap;
@@ -8,9 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import sun.plugin2.main.server.Plugin;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 
-public class NPCManager {
+public class NPCManager implements Listener{
 
     private static NPCManager INSTANCE;
 
@@ -20,6 +26,8 @@ public class NPCManager {
     private BiMap<Integer, EntityHuman> LOOKUP = HashBiMap.create();
 
     public NPCManager(Plugin plugin) {
+        startUp();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         INSTANCE = this;
     }
 
@@ -63,5 +71,27 @@ public class NPCManager {
             return null;
         }
         return INSTANCE;
+    }
+
+    public void startUp() {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            PlayerInjector.injectPlayer(player);
+        }
+    }
+
+    public void shutdown() {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            PlayerInjector.uninjectPlayer(player);
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        PlayerInjector.injectPlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        PlayerInjector.uninjectPlayer(event.getPlayer());
     }
 }

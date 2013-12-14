@@ -1,6 +1,7 @@
 package com.captainbern.npclib.npc;
 
 import com.captainbern.npclib.wrappers.DataWatcher;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,5 +30,7 @@ public interface NPC {
     public void sleep();
 
     public void setDataWatcher(DataWatcher dataWatcher);
+
+    public GameProfile getGameProfile();
 
 }
