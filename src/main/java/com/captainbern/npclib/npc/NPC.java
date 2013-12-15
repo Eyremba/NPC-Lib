@@ -31,6 +31,8 @@ public interface NPC {
 
     public void setDataWatcher(DataWatcher dataWatcher);
 
+    public DataWatcher getDataWatcher();
+
     public GameProfile getGameProfile();
 
 }

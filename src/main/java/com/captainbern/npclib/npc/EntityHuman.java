@@ -26,7 +26,11 @@ public class EntityHuman implements NPC {
         this.profile = new GameProfile("NPC", name);
         this.health = 20.0;
         this.itemInHand = new ItemStack(Material.AIR);
-        this.dataWatcher = null; //change this
+
+        this.dataWatcher = new DataWatcher();
+        dataWatcher.write(0, (Object) (byte) 0);
+        dataWatcher.write(1, (Object) (short) 0);
+        dataWatcher.write(8, (Object) (byte) 0);
     }
 
     @Override
@@ -104,7 +108,12 @@ public class EntityHuman implements NPC {
 
     @Override
     public void setDataWatcher(DataWatcher dataWatcher) {
+        this.dataWatcher = dataWatcher;
+    }
 
+    @Override
+    public DataWatcher getDataWatcher() {
+        return this.dataWatcher;
     }
 
     @Override
