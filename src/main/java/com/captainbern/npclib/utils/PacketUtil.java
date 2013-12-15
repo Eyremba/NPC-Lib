@@ -34,6 +34,6 @@ public class PacketUtil {
     }
 
     public static Action readAction(Object enumAction) {
-        return ReflectionUtil.invokeMethod(READ_ACTION, null, enumAction);
+        return Action.getFromId((Integer) ReflectionUtil.invokeMethod(READ_ACTION, null, enumAction));
     }
 }

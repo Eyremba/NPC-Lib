@@ -108,16 +108,9 @@ public class NPCManager implements Listener{
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        NPC npc = spawnNPC(event.getPlayer().getLocation(), event.getPlayer().getName());
-
         PlayerInjector.injectPlayer(event.getPlayer());
 
         updatePlayer(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        PlayerInjector.uninjectPlayer(event.getPlayer());
     }
 
     @EventHandler

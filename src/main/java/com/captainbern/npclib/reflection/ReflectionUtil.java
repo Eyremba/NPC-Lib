@@ -2,6 +2,7 @@ package com.captainbern.npclib.reflection;
 
 import com.captainbern.npclib.NPCManager;
 import org.bukkit.Bukkit;
+import sun.reflect.MethodAccessor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -83,7 +84,13 @@ public class ReflectionUtil {
 
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) {
         try {
-            return clazz.getDeclaredMethod(methodName, params);
+            Method method = clazz.getDeclaredMethod(methodName, params);
+
+            if(!method.isAccessible()) {
+                method.setAccessible(true);
+            }
+
+            return method;
         } catch (NoSuchMethodException e) {
             NPCManager.LOGGER.warning("No such method: " + methodName + "!");
             return null;
