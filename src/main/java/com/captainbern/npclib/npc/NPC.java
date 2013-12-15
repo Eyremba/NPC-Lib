@@ -35,4 +35,6 @@ public interface NPC {
 
     public void swingArm();
 
+    public void despawn();
+
 }

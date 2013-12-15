@@ -47,7 +47,7 @@ public class Test extends JavaPlugin implements Listener {
         }
 
         if(event.getAction() == Action.RIGHT_CLICK) {
-            manager.updateNPC(event.getNPC(), PacketFactory.craftSleepPacket(event.getNPC()));
+            event.getNPC().swingArm();
         }
     }
 }

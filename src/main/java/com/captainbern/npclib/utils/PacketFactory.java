@@ -22,7 +22,6 @@ public class PacketFactory {
         packet.write("g", toPackedByte(npc.getLocation().getPitch()));
         packet.write("h", npc.getInventory(SlotType.ITEM_IN_HAND).getTypeId());// item in hand (id)
         packet.write("i", npc.getDataWatcher().getHandle());
-
         return packet.getHandle();
     }
 
@@ -68,6 +67,19 @@ public class PacketFactory {
         Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 11);
         packet.write("a", npc.getEntityID());
         packet.write("b", 3);
+        return packet.getHandle();
+    }
+
+    public static Object craftMetaDataPacket(NPC npc) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 28);
+        packet.write("a", npc.getEntityID());
+        packet.write("b", npc.getDataWatcher().getHandle());
+        return packet.getHandle();
+    }
+
+    public static Object craftDestroyPacket(NPC npc) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 19);
+        packet.write("a", new int[]{npc.getEntityID()});
         return packet.getHandle();
     }
 

@@ -109,7 +109,7 @@ public class EntityHuman implements NPC {
     @Override
     public void setDataWatcher(DataWatcher dataWatcher) {
         this.dataWatcher = dataWatcher;
-        NPCManager.getInstance().updateNPC(this);
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftMetaDataPacket(this));
     }
 
     @Override
@@ -130,5 +130,10 @@ public class EntityHuman implements NPC {
     @Override
     public void swingArm() {
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftArmSwingPacket(this));
+    }
+
+    @Override
+    public void despawn() {
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftDestroyPacket(this));
     }
 }

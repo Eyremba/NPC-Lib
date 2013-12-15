@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -37,6 +38,13 @@ public class NPCManager implements Listener{
     }
 
     public NPC spawnNPC(Location location, String name) {
+        if(name.length() > 16) {
+            LOGGER.warning("NPC's can't have names longer than 16 characters!");
+            String tmp = name.substring(0, 16);
+            LOGGER.warning("Name: " + name + " has been shortened to: " + tmp);
+            name = tmp;
+        }
+
         int id = getNextID();
         EntityHuman human = new EntityHuman(location, name, id);
         LOOKUP.put(id, human);
@@ -90,6 +98,9 @@ public class NPCManager implements Listener{
         for(Player player : Bukkit.getOnlinePlayers()) {
             PlayerInjector.uninjectPlayer(player);
         }
+        for(NPC npc : LOOKUP.values()) {
+            despawn(npc);
+        }
     }
 
     private void updatePlayer(Player player) {
@@ -125,6 +136,15 @@ public class NPCManager implements Listener{
         }
     }
 
+    public void despawn(NPC npc) {
+        npc.despawn();
+        LOOKUP.inverse().remove(npc);
+    }
+
+    public void despawn(int id) {
+        LOOKUP.get(id).despawn();
+    }
+
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(HANDLER, new Runnable() {
@@ -140,5 +160,17 @@ public class NPCManager implements Listener{
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         updatePlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onRespawn(final PlayerRespawnEvent event) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(HANDLER, new Runnable() {
+            @Override
+            public void run() {
+                PlayerInjector.injectPlayer(event.getPlayer());
+
+                updatePlayer(event.getPlayer());
+            }
+        }, 1L); //one tick so the player object is initialized properly.
     }
 }
