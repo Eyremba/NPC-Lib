@@ -11,12 +11,12 @@ public class EntityHuman implements NPC {
     private final int id;
     private GameProfile profile;
     private Location location;
-    private double health;
     private ItemStack itemInHand;
     private ItemStack helmet;
     private ItemStack body;
     private ItemStack pants;
     private ItemStack shoes;
+    private boolean sleeping;
 
     private DataWatcher dataWatcher;
 
@@ -24,7 +24,6 @@ public class EntityHuman implements NPC {
         this.location = location;
         this.id = id;
         this.profile = new GameProfile("NPC", name);
-        this.health = 20.0;
         this.itemInHand = new ItemStack(Material.AIR);
 
         this.dataWatcher = new DataWatcher();
@@ -61,11 +60,6 @@ public class EntityHuman implements NPC {
     }
 
     @Override
-    public double getHealth() {
-        return health;
-    }
-
-    @Override
     public void setName(String name) {
         profile = new GameProfile("NPC", name);
     }
@@ -92,18 +86,13 @@ public class EntityHuman implements NPC {
     }
 
     @Override
-    public void setHealth(double health) {
-        this.health = health;
+    public boolean isSleeping() {
+        return sleeping;
     }
 
     @Override
-    public void hurt() {
-
-    }
-
-    @Override
-    public void sleep() {
-
+    public void setSleeping(boolean sleeping) {
+        this.sleeping = sleeping;
     }
 
     @Override

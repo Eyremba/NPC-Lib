@@ -15,19 +15,15 @@ public interface NPC {
 
     public ItemStack getInventory(SlotType type);
 
-    public double getHealth();
-
     public void setName(String name);
 
     public void setLocation(Location location);
 
     public void setInventory(SlotType type, ItemStack item);
 
-    public void setHealth(double health);
+    public void setSleeping(boolean sleeping);
 
-    public void hurt();
-
-    public void sleep();
+    public boolean isSleeping();
 
     public void setDataWatcher(DataWatcher dataWatcher);
 

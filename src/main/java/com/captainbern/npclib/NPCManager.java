@@ -3,6 +3,8 @@ package com.captainbern.npclib;
 import com.captainbern.npclib.injector.PlayerInjector;
 import com.captainbern.npclib.npc.EntityHuman;
 import com.captainbern.npclib.npc.NPC;
+import com.captainbern.npclib.utils.PacketFactory;
+import com.captainbern.npclib.utils.PlayerUtils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
@@ -85,9 +87,23 @@ public class NPCManager implements Listener{
         }
     }
 
+    private void updatePlayer(Player player) {
+        for(NPC npc : LOOKUP.values()) {
+            if(npc.getLocation().getWorld().equals(player.getWorld())) {
+                PlayerUtils.sendPacket(player, PacketFactory.craftSpawnPacket(npc));
+
+                if(npc.isSleeping()) {
+                    PlayerUtils.sendPacket(player, PacketFactory.craftSleepPacket(npc));
+                }
+            }
+        }
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         PlayerInjector.injectPlayer(event.getPlayer());
+
+        updatePlayer(event.getPlayer());
     }
 
     @EventHandler
