@@ -1,7 +1,10 @@
 package com.captainbern.npclib;
 
+import com.captainbern.npclib.events.PlayerInteractNPCEvent;
 import com.captainbern.npclib.npc.NPC;
 import com.captainbern.npclib.npc.SlotType;
+import com.captainbern.npclib.utils.Action;
+import com.captainbern.npclib.utils.PacketFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -27,12 +30,24 @@ public class Test extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onSpawn(PlayerJoinEvent event) {
-        NPC npc = manager.spawnNPC(event.getPlayer().getLocation(), event.getPlayer().getName());
-        npc.setInventory(SlotType.ITEM_IN_HAND, new ItemStack(Material.DIAMOND_SWORD));
-        npc.setInventory(SlotType.HELMET, new ItemStack(Material.DIAMOND_HELMET));
-        npc.setInventory(SlotType.BODY_ARMOR, new ItemStack(Material.DIAMOND_CHESTPLATE));
-        npc.setInventory(SlotType.PANTS, new ItemStack(Material.DIAMOND_LEGGINGS));
-        npc.setInventory(SlotType.SHOES, new ItemStack(Material.DIAMOND_BOOTS));
+    public void onSpawn(final PlayerJoinEvent event) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                NPC npc = manager.spawnNPC(event.getPlayer().getLocation(), event.getPlayer().getName());
+
+            }
+        }, 20L);
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractNPCEvent event) {
+        if(event.getAction() == Action.LEFT_CLICK) {
+            event.getNPC().hurt();
+        }
+
+        if(event.getAction() == Action.RIGHT_CLICK) {
+            manager.updateNPC(event.getNPC(), PacketFactory.craftSleepPacket(event.getNPC()));
+        }
     }
 }

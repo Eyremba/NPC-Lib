@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class PlayerUtils {
+public class PlayerUtil {
 
     private static final Field channelField = ReflectionUtil.getField(ReflectionUtil.getNMSClass("NetworkManager"), "k");
 
@@ -19,7 +19,8 @@ public class PlayerUtils {
         try {
             sendPacket.invoke(playerConnection, packet);
         } catch (Exception e) {
-            NPCManager.LOGGER_REFLECTION.warning("Failed to retrieve the PlayerConnection of: " + player.getName());
+            NPCManager.LOGGER_REFLECTION.warning("Failed to send a packet to: " + player.getName());
+            e.printStackTrace();
         }
     }
 

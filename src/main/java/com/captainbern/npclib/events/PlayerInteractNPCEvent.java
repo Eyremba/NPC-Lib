@@ -27,6 +27,10 @@ public class PlayerInteractNPCEvent extends Event {
         return player;
     }
 
+    public NPC getNPC() {
+        return npc;
+    }
+
     public HandlerList getHandlers() {
         return handlers;
     }

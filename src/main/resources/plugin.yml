@@ -1,0 +1,4 @@
+name: NPC-Lib
+version: ${project.version}
+main: com.captainbern.npclib.Test
+authors: [CaptainBern]

@@ -31,4 +31,8 @@ public interface NPC {
 
     public GameProfile getGameProfile();
 
+    public void hurt();
+
+    public void swingArm();
+
 }

@@ -32,7 +32,6 @@ public class PacketFactory {
         packet.write("b", npc.getLocation().getBlockX());
         packet.write("c", npc.getLocation().getBlockY());
         packet.write("d", npc.getLocation().getBlockZ());
-
         return packet.getHandle();
     }
 
@@ -49,6 +48,27 @@ public class PacketFactory {
             }
         }
         return packets;
+    }
+
+    public static Object craftArmSwingPacket(NPC npc) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 11);
+        packet.write("a", npc.getEntityID());
+        packet.write("b", 0);
+        return packet.getHandle();
+    }
+
+    public static Object craftHurtPacket(NPC npc) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 11);
+        packet.write("a", npc.getEntityID());
+        packet.write("b", 1);
+        return packet.getHandle();
+    }
+
+    public static Object craftLeaveBedPacket(NPC npc) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 11);
+        packet.write("a", npc.getEntityID());
+        packet.write("b", 3);
+        return packet.getHandle();
     }
 
     private static int asFixedPoint(double value) {

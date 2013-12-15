@@ -1,9 +1,12 @@
 package com.captainbern.npclib.npc;
 
+import com.captainbern.npclib.NPCManager;
+import com.captainbern.npclib.utils.PacketFactory;
 import com.captainbern.npclib.wrappers.DataWatcher;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityHuman implements NPC {
@@ -62,11 +65,13 @@ public class EntityHuman implements NPC {
     @Override
     public void setName(String name) {
         profile = new GameProfile("NPC", name);
+        NPCManager.getInstance().updateNPC(this);
     }
 
     @Override
     public void setLocation(Location location) {
         this.location = location;
+        NPCManager.getInstance().updateNPC(this);
     }
 
     @Override
@@ -83,6 +88,7 @@ public class EntityHuman implements NPC {
             case SHOES : this.shoes = item;
                 break;
         }
+        NPCManager.getInstance().updateNPC(this);
     }
 
     @Override
@@ -93,11 +99,17 @@ public class EntityHuman implements NPC {
     @Override
     public void setSleeping(boolean sleeping) {
         this.sleeping = sleeping;
+        if(sleeping) {
+            NPCManager.getInstance().updateNPC(this, PacketFactory.craftSleepPacket(this));
+        } else {
+            NPCManager.getInstance().updateNPC(this, PacketFactory.craftLeaveBedPacket(this));
+        }
     }
 
     @Override
     public void setDataWatcher(DataWatcher dataWatcher) {
         this.dataWatcher = dataWatcher;
+        NPCManager.getInstance().updateNPC(this);
     }
 
     @Override
@@ -108,5 +120,15 @@ public class EntityHuman implements NPC {
     @Override
     public GameProfile getGameProfile() {
         return profile;
+    }
+
+    @Override
+    public void hurt() {
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftHurtPacket(this));
+    }
+
+    @Override
+    public void swingArm() {
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftArmSwingPacket(this));
     }
 }
