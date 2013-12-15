@@ -11,10 +11,10 @@ import java.util.Map;
 
 public class PacketUtil {
 
-    private static final SafeField<Map<Integer, Class<?>>> SERVER_PACKETS_MAP = new SafeField<Map<Integer, Class<?>>>(ReflectionUtil.getNMSClass("EnumProtocol"), "h");
-    private static final SafeField<Map<Integer, Class<?>>> CLIENT_PACKETS_MAP = new SafeField<Map<Integer, Class<?>>>(ReflectionUtil.getNMSClass("EnumProtocol"), "i");
+    private static final SafeField<Map<Integer, Class<?>>> SERVER_PACKETS_MAP = new SafeField<Map<Integer, Class<?>>>(ReflectionUtil.getNMSClass("EnumProtocol"), "i");
+    private static final SafeField<Map<Integer, Class<?>>> CLIENT_PACKETS_MAP = new SafeField<Map<Integer, Class<?>>>(ReflectionUtil.getNMSClass("EnumProtocol"), "h");
 
-    private static final Method READ_ACTION = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("EnumEntityAction"), "a", ReflectionUtil.getNMSClass("EnumEntityUseAction"));
+    private static final Method READ_ACTION = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("EnumEntityUseAction"), "a", ReflectionUtil.getNMSClass("EnumEntityUseAction"));
 
     public static Object getPacket(Protocol protocol, Sender sender, int id) {
         try{
@@ -34,6 +34,6 @@ public class PacketUtil {
     }
 
     public static Action readAction(Object enumAction) {
-        return ReflectionUtil.invokeMethod(READ_ACTION, enumAction, enumAction);
+        return ReflectionUtil.invokeMethod(READ_ACTION, null, enumAction);
     }
 }

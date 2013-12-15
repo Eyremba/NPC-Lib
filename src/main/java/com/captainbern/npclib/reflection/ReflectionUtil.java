@@ -10,9 +10,14 @@ import java.lang.reflect.Method;
 public class ReflectionUtil {
 
     public static final String NMS_PATH = getNMSPackageName();
+    public static final String CB_PATH = getCBPackageName();
 
     public static String getNMSPackageName() {
         return "net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+    }
+
+    public static String getCBPackageName() {
+        return "org.bukkit.craftbukkit." + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
     }
 
     /**
@@ -30,6 +35,10 @@ public class ReflectionUtil {
 
     public static Class getNMSClass(String className) {
         return getClass(NMS_PATH + "." + className);
+    }
+
+    public static Class getCBClass(String className) {
+        return getClass(CB_PATH + "." + className);
     }
 
     /**

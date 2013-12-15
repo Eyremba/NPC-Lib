@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 
 public class NPCManager implements Listener{
@@ -95,12 +96,20 @@ public class NPCManager implements Listener{
                 if(npc.isSleeping()) {
                     PlayerUtils.sendPacket(player, PacketFactory.craftSleepPacket(npc));
                 }
+
+                if(!PacketFactory.craftEquipmentPacket(npc).isEmpty()) {
+                    for(Object packet : PacketFactory.craftEquipmentPacket(npc)) {
+                        PlayerUtils.sendPacket(player, packet);
+                    }
+                }
             }
         }
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        NPC npc = spawnNPC(event.getPlayer().getLocation(), event.getPlayer().getName());
+
         PlayerInjector.injectPlayer(event.getPlayer());
 
         updatePlayer(event.getPlayer());
@@ -109,5 +118,10 @@ public class NPCManager implements Listener{
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         PlayerInjector.uninjectPlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        updatePlayer(event.getPlayer());
     }
 }
