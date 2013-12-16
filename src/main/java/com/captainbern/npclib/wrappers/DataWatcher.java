@@ -8,7 +8,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import java.lang.reflect.Method;
+
 public class DataWatcher extends BasicWrapper {
+
+    private final Method RETURN_ALL_WATCHED = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("DataWatcher"), "c");
+    private final Method UNWATCH_AND_RETURN_ALL_WATCHED = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("DataWatcher"), "b");
 
     public DataWatcher() {
         Entity fake = Bukkit.getWorlds().get(0).spawnEntity(new Location(Bukkit.getWorlds().get(0), 0, -5, 0), EntityType.CHICKEN);
@@ -20,6 +25,14 @@ public class DataWatcher extends BasicWrapper {
             e.printStackTrace();
         }
 
+    }
+
+    public Object getAllWatched() {
+        return ReflectionUtil.invokeMethod(RETURN_ALL_WATCHED, getHandle());
+    }
+
+    public Object unwatchAndReturnAllWatched() {
+        return ReflectionUtil.invokeMethod(UNWATCH_AND_RETURN_ALL_WATCHED, getHandle());
     }
 
     public void write(int i, Object object){

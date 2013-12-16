@@ -6,6 +6,7 @@ import com.captainbern.npclib.utils.protocol.Packet;
 import com.captainbern.npclib.utils.protocol.Protocol;
 import com.captainbern.npclib.utils.protocol.Sender;
 import com.google.common.collect.Lists;
+import org.bukkit.Location;
 
 import java.util.List;
 
@@ -70,16 +71,41 @@ public class PacketFactory {
         return packet.getHandle();
     }
 
-    public static Object craftMetaDataPacket(NPC npc) {
+    public static Object craftMetaDataPacket(NPC npc, boolean flag) {
         Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 28);
         packet.write("a", npc.getEntityID());
-        packet.write("b", npc.getDataWatcher().getHandle());
+        if(flag) {
+            packet.write("b", npc.getDataWatcher().getAllWatched());
+        } else {
+            packet.write("b", npc.getDataWatcher().unwatchAndReturnAllWatched());
+        }
         return packet.getHandle();
     }
 
     public static Object craftDestroyPacket(NPC npc) {
         Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 19);
         packet.write("a", new int[]{npc.getEntityID()});
+        return packet.getHandle();
+    }
+
+    public static Object craftLookMovePacket(NPC npc, Location to) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 20);
+        packet.write("a", npc.getEntityID());
+        packet.write("b", (byte) asFixedPoint(to.getX()));
+        packet.write("c", (byte) asFixedPoint(to.getY()));
+        packet.write("d", (byte) asFixedPoint(to.getZ()));
+        packet.write("e", toPackedByte(to.getYaw()));
+        packet.write("f", toPackedByte(to.getPitch()));
+        packet.write("g", true);
+
+        return packet.getHandle();
+    }
+
+    public static Object craftHeadRotationPacket(NPC npc, float yaw) {
+        Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 25);
+        packet.write("a", npc.getEntityID());
+        packet.write("b", toPackedByte(yaw));
+
         return packet.getHandle();
     }
 

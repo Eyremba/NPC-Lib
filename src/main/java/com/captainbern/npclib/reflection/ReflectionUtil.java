@@ -105,6 +105,7 @@ public class ReflectionUtil {
             return null;
         } catch (InvocationTargetException e) {
             NPCManager.LOGGER.warning("Failed to invoke method: " + method.getName() + "!");
+            e.printStackTrace();
             return null;
         }
     }

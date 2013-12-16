@@ -20,6 +20,8 @@ public class EntityHuman implements NPC {
     private ItemStack pants;
     private ItemStack shoes;
     private boolean sleeping;
+    private boolean crouching;
+    private boolean blocking;
 
     private DataWatcher dataWatcher;
 
@@ -30,9 +32,9 @@ public class EntityHuman implements NPC {
         this.itemInHand = new ItemStack(Material.AIR);
 
         this.dataWatcher = new DataWatcher();
-        dataWatcher.write(0, (Object) (byte) 0);
-        dataWatcher.write(1, (Object) (short) 0);
-        dataWatcher.write(8, (Object) (byte) 0);
+        dataWatcher.write(0, (byte) 0);
+        dataWatcher.write(1, (short) 0);
+        dataWatcher.write(8, (byte) 0);
     }
 
     @Override
@@ -109,7 +111,7 @@ public class EntityHuman implements NPC {
     @Override
     public void setDataWatcher(DataWatcher dataWatcher) {
         this.dataWatcher = dataWatcher;
-        NPCManager.getInstance().updateNPC(this, PacketFactory.craftMetaDataPacket(this));
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftMetaDataPacket(this, true));
     }
 
     @Override
@@ -133,7 +135,59 @@ public class EntityHuman implements NPC {
     }
 
     @Override
+    public void setBlocking(boolean bool) {
+        this.blocking = bool;
+        DataWatcher watcher = new DataWatcher();
+        watcher.write(0, (byte) (bool ? 16 : 0));
+        watcher.write(1, (short) 0);
+        watcher.write(8, (byte) 0);
+        setDataWatcher(watcher);
+    }
+
+    @Override
+    public boolean isBlocking() {
+        return blocking;
+    }
+
+    @Override
+    public void setCrouched(boolean bool) {
+        this.crouching = bool;
+        DataWatcher watcher = new DataWatcher();
+        watcher.write(0, (byte)(bool ? 2 : 0));
+        watcher.write(1, (short) 0);
+        watcher.write(8, (byte) 0);
+        setDataWatcher(watcher);
+    }
+
+    @Override
+    public boolean isCrouching() {
+        return crouching;
+    }
+
+    @Override
     public void despawn() {
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftDestroyPacket(this));
+    }
+
+    @Override
+    public void lookAt(Location location) {
+       // Location newLoc = new Location(location.getWorld(), getLocation().getX(), getLocation().getY(), getLocation().getZ());
+       // newLoc.setPitch(location.getPitch());
+       // newLoc.setYaw(location.getYaw());
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftHeadRotationPacket(this, location.getYaw()));
+    }
+
+    @Override
+    public void reset() {
+        for(SlotType type : SlotType.values()) {
+            setInventory(type, new ItemStack(Material.AIR));
+        }
+
+        DataWatcher dataWatcher = new DataWatcher();
+        dataWatcher.write(0, (byte) 0);
+        dataWatcher.write(1, (short) 0);
+        dataWatcher.write(8, (byte) 0);
+
+        setDataWatcher(dataWatcher);
     }
 }

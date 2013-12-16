@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.Plugin;
 
 public class NPCManager implements Listener{
@@ -35,6 +36,10 @@ public class NPCManager implements Listener{
         Bukkit.getPluginManager().registerEvents(this, plugin);
         INSTANCE = this;
         HANDLER = plugin;
+
+        for(NPC npc : LOOKUP.values()) {
+            updateNPC(npc);
+        }
     }
 
     public NPC spawnNPC(Location location, String name) {
@@ -172,5 +177,12 @@ public class NPCManager implements Listener{
                 updatePlayer(event.getPlayer());
             }
         }, 1L); //one tick so the player object is initialized properly.
+    }
+
+    @EventHandler
+    public void onLoad(ChunkLoadEvent event) {
+        for(NPC npc : LOOKUP.values()) {
+            updateNPC(npc);
+        }
     }
 }

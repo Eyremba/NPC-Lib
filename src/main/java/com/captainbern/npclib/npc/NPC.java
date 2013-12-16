@@ -35,6 +35,18 @@ public interface NPC {
 
     public void swingArm();
 
+    public void setBlocking(boolean blocking);
+
+    public boolean isBlocking();
+
+    public void setCrouched(boolean crouched);
+
+    public boolean isCrouching();
+
     public void despawn();
+
+    public void lookAt(Location location);
+
+    public void reset();
 
 }
