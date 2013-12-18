@@ -94,8 +94,8 @@ public class PacketFactory {
         packet.write("b", (byte) asFixedPoint(to.getX()));
         packet.write("c", (byte) asFixedPoint(to.getY()));
         packet.write("d", (byte) asFixedPoint(to.getZ()));
-        packet.write("e", toPackedByte(to.getYaw()));
-        packet.write("f", toPackedByte(to.getPitch()));
+        packet.write("e", asFractionOf360(to.getYaw()));
+        packet.write("f", asFractionOf360(to.getPitch()));
         packet.write("g", true);
 
         return packet.getHandle();
@@ -119,5 +119,9 @@ public class PacketFactory {
 
     private static byte toPackedByte(float f) {
         return (byte) ((byte) f * 256.0F / 360.0F);
+    }
+
+    private static byte asFractionOf360(float f) {
+        return (byte) ((byte) f / 360);
     }
 }

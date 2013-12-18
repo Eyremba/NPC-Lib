@@ -21,10 +21,6 @@ public interface NPC {
 
     public void setInventory(SlotType type, ItemStack item);
 
-    public void setSleeping(boolean sleeping);
-
-    public boolean isSleeping();
-
     public void setDataWatcher(DataWatcher dataWatcher);
 
     public DataWatcher getDataWatcher();
@@ -39,6 +35,10 @@ public interface NPC {
 
     public boolean isBlocking();
 
+    public void setSleeping(boolean sleeping);
+
+    public boolean isSleeping();
+
     public void setCrouched(boolean crouched);
 
     public boolean isCrouching();
@@ -46,6 +46,8 @@ public interface NPC {
     public void despawn();
 
     public void lookAt(Location location);
+
+    public void walkTo(Location location);
 
     public void reset();
 

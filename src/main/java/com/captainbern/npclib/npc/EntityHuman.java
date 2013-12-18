@@ -35,6 +35,8 @@ public class EntityHuman implements NPC {
         dataWatcher.write(0, (byte) 0);
         dataWatcher.write(1, (short) 0);
         dataWatcher.write(8, (byte) 0);
+
+        this.sleeping = false;
     }
 
     @Override
@@ -94,21 +96,6 @@ public class EntityHuman implements NPC {
     }
 
     @Override
-    public boolean isSleeping() {
-        return sleeping;
-    }
-
-    @Override
-    public void setSleeping(boolean sleeping) {
-        this.sleeping = sleeping;
-        if(sleeping) {
-            NPCManager.getInstance().updateNPC(this, PacketFactory.craftSleepPacket(this));
-        } else {
-            NPCManager.getInstance().updateNPC(this, PacketFactory.craftLeaveBedPacket(this));
-        }
-    }
-
-    @Override
     public void setDataWatcher(DataWatcher dataWatcher) {
         this.dataWatcher = dataWatcher;
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftMetaDataPacket(this, true));
@@ -165,6 +152,21 @@ public class EntityHuman implements NPC {
     }
 
     @Override
+    public void setSleeping(boolean sleeping) {
+        this.sleeping = sleeping;
+        if(this.sleeping) {
+            NPCManager.getInstance().updateNPC(this, PacketFactory.craftSleepPacket(this));
+        } else {
+            NPCManager.getInstance().updateNPC(this, PacketFactory.craftLeaveBedPacket(this));
+        }
+    }
+
+    @Override
+    public boolean isSleeping() {
+        return sleeping;
+    }
+
+    @Override
     public void despawn() {
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftDestroyPacket(this));
     }
@@ -175,6 +177,12 @@ public class EntityHuman implements NPC {
        // newLoc.setPitch(location.getPitch());
        // newLoc.setYaw(location.getYaw());
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftHeadRotationPacket(this, location.getYaw()));
+    }
+
+    @Override
+    public void walkTo(Location location) {
+        this.location = location;
+        NPCManager.getInstance().updateNPC(this, PacketFactory.craftLookMovePacket(this, location));
     }
 
     @Override

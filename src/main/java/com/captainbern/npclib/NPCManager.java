@@ -18,28 +18,31 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class NPCManager implements Listener{
+public class NPCManager extends JavaPlugin implements Listener{
 
     private static NPCManager INSTANCE;
-
-    private final Plugin HANDLER;
 
     public static final ModuleLogger LOGGER = new ModuleLogger("NPC");
     public static final ModuleLogger LOGGER_REFLECTION = LOGGER.getModule("Reflection");
 
     private BiMap<Integer, EntityHuman> LOOKUP = HashBiMap.create();
 
-    public NPCManager(Plugin plugin) {
+    @Override
+    public void onEnable() {
         startUp();
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(this, this);
         INSTANCE = this;
-        HANDLER = plugin;
 
         for(NPC npc : LOOKUP.values()) {
             updateNPC(npc);
         }
+    }
+
+    @Override
+    public void onDisable() {
+        shutdown();
     }
 
     public NPC spawnNPC(Location location, String name) {
@@ -103,9 +106,6 @@ public class NPCManager implements Listener{
         for(Player player : Bukkit.getOnlinePlayers()) {
             PlayerInjector.uninjectPlayer(player);
         }
-        for(NPC npc : LOOKUP.values()) {
-            despawn(npc);
-        }
     }
 
     private void updatePlayer(Player player) {
@@ -117,6 +117,10 @@ public class NPCManager implements Listener{
                     for(Object packet : PacketFactory.craftEquipmentPacket(npc)) {
                         PlayerUtil.sendPacket(player, packet);
                     }
+                }
+
+                if(npc.isSleeping()) {
+                    PlayerUtil.sendPacket(player, PacketFactory.craftSleepPacket(npc));
                 }
             }
         }
@@ -152,7 +156,7 @@ public class NPCManager implements Listener{
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(HANDLER, new Runnable() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
                 PlayerInjector.injectPlayer(event.getPlayer());
@@ -169,11 +173,9 @@ public class NPCManager implements Listener{
 
     @EventHandler
     public void onRespawn(final PlayerRespawnEvent event) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(HANDLER, new Runnable() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             @Override
             public void run() {
-                PlayerInjector.injectPlayer(event.getPlayer());
-
                 updatePlayer(event.getPlayer());
             }
         }, 1L); //one tick so the player object is initialized properly.

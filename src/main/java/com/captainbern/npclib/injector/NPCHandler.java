@@ -9,7 +9,6 @@ import net.minecraft.util.io.netty.channel.ChannelHandlerContext;
 import net.minecraft.util.io.netty.channel.ChannelInboundHandlerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import sun.management.resources.agent;
 
 public class NPCHandler extends ChannelInboundHandlerAdapter {
 

@@ -14,7 +14,7 @@ public class DataWatcher extends BasicWrapper {
 
     private final Method RETURN_ALL_WATCHED = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("DataWatcher"), "c");
     private final Method UNWATCH_AND_RETURN_ALL_WATCHED = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("DataWatcher"), "b");
-
+    //this should be improved because now it spawns a chicken and I hate chickens.
     public DataWatcher() {
         Entity fake = Bukkit.getWorlds().get(0).spawnEntity(new Location(Bukkit.getWorlds().get(0), 0, -5, 0), EntityType.CHICKEN);
 

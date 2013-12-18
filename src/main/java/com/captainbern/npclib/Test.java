@@ -25,9 +25,9 @@ public class Test extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        manager = new NPCManager(this);
+        //manager = new NPCManager(this);
 
-        Bukkit.getPluginManager().registerEvents(this, this);
+        //Bukkit.getPluginManager().registerEvents(this, this);
     }
 
     @Override
