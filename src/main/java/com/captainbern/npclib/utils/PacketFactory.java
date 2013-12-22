@@ -16,11 +16,11 @@ public class PacketFactory {
         Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 12);
         packet.write("a", npc.getEntityID());
         packet.write("b", npc.getGameProfile());
-        packet.write("c", asFixedPoint(npc.getLocation().getX()));
-        packet.write("d", asFixedPoint(npc.getLocation().getY()));
-        packet.write("e", asFixedPoint(npc.getLocation().getZ()));
-        packet.write("f", toPackedByte(npc.getLocation().getYaw()));
-        packet.write("g", toPackedByte(npc.getLocation().getPitch()));
+        packet.write("c", MathUtil.asFixedPoint(npc.getLocation().getX()));
+        packet.write("d", MathUtil.asFixedPoint(npc.getLocation().getY()));
+        packet.write("e", MathUtil.asFixedPoint(npc.getLocation().getZ()));
+        packet.write("f", MathUtil.getCompressedAngle(npc.getLocation().getYaw()));
+        packet.write("g", MathUtil.getCompressedAngle(npc.getLocation().getPitch()));
         packet.write("h", npc.getInventory(SlotType.ITEM_IN_HAND).getTypeId());// item in hand (id)
         packet.write("i", npc.getDataWatcher().getHandle());
         return packet.getHandle();
@@ -91,11 +91,11 @@ public class PacketFactory {
     public static Object craftLookMovePacket(NPC npc, Location to) {
         Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 20);
         packet.write("a", npc.getEntityID());
-        packet.write("b", (byte) asFixedPoint(to.getX()));
-        packet.write("c", (byte) asFixedPoint(to.getY()));
-        packet.write("d", (byte) asFixedPoint(to.getZ()));
-        packet.write("e", asFractionOf360(to.getYaw()));
-        packet.write("f", asFractionOf360(to.getPitch()));
+        packet.write("b", (byte) MathUtil.asFixedPoint(to.getX()));
+        packet.write("c", (byte) MathUtil.asFixedPoint(to.getY()));
+        packet.write("d", (byte) MathUtil.asFixedPoint(to.getZ()));
+        packet.write("e", MathUtil.getCompressedAngle(to.getYaw()));
+        packet.write("f", MathUtil.getCompressedAngle(to.getPitch()));
         packet.write("g", true);
 
         return packet.getHandle();
@@ -104,24 +104,8 @@ public class PacketFactory {
     public static Object craftHeadRotationPacket(NPC npc, float yaw) {
         Packet packet = new Packet(Protocol.PLAY, Sender.SERVER, 25);
         packet.write("a", npc.getEntityID());
-        packet.write("b", toPackedByte(yaw));
+        packet.write("b", MathUtil.getCompressedAngle(yaw));
 
         return packet.getHandle();
-    }
-
-    private static int asFixedPoint(double value) {
-        return (int) (value * 32.0D);
-    }
-
-    private static double fromFixedPoint(double value) {
-        return value / 32.0D;
-    }
-
-    private static byte toPackedByte(float f) {
-        return (byte) ((byte) f * 256.0F / 360.0F);
-    }
-
-    private static byte asFractionOf360(float f) {
-        return (byte) ((byte) f / 360);
     }
 }

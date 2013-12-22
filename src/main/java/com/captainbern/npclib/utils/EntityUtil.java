@@ -15,12 +15,12 @@ public class EntityUtil {
     /**
      * Utils for the projectiles etc...
      */
-    public static final Class<?> ENTITY_SNOWBALL = ReflectionUtil.getNMSClass("EntitySnowBall");
+    public static final Class<?> ENTITY_SNOWBALL = ReflectionUtil.getNMSClass("EntitySnowball");
     public static final Class<?> ENTITY_EGG = ReflectionUtil.getNMSClass("EntityEgg");
     public static final Class<?> ENTITY_ENDERPEARL = ReflectionUtil.getNMSClass("EntityEnderPearl");
     public static final Class<?> ENTITY_ARROW = ReflectionUtil.getNMSClass("EntityArrow");
     public static final Class<?> ENTITY_POTION = ReflectionUtil.getNMSClass("EntityPotion");
-    public static final Class<?> FIREBALL = ReflectionUtil.getNMSClass("Fireball");
+    public static final Class<?> FIREBALL = ReflectionUtil.getNMSClass("EntityFireball");
     public static final Class<?> ENTITY_SMALL_FIREBALL = ReflectionUtil.getNMSClass("EntitySmallFireball");
     public static final Class<?> ENTITY_LARGE_FIREBALL = ReflectionUtil.getNMSClass("EntityLargeFireball");
     public static final Class<?> ENTITY_WITHERSKULL = ReflectionUtil.getNMSClass("EntityWitherSkull");
