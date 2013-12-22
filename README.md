@@ -11,12 +11,7 @@ NPCManager manager;
 
 @Override
 public void onEnable() {
-manager = new NPCManager(this);
-}
-
-@Override
-public void onDisable() {
-manager.shutdown();
+manager = NPCManager.getNPCManager(this);
 }
 ```
 
