@@ -33,7 +33,7 @@ public class EntityUtil {
     private static final Method GET_BUKKIT_ENTITY = ReflectionUtil.getMethod(ReflectionUtil.getNMSClass("Entity"), "getBukkitEntity");
 
     public static void setPositionRotation(Object entityHandle, double x, double y, double z, float yaw, float pitch) {
-        ReflectionUtil.invokeMethod(SET__POSITION_ROTATION, x, y, z, yaw, pitch);
+        ReflectionUtil.invokeMethod(SET__POSITION_ROTATION, entityHandle, x, y, z, yaw, pitch);
     }
 
     public static void addEntity(Object worldhandle, Object entityHandle) {
