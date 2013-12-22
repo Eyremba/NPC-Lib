@@ -108,9 +108,7 @@ public class NPCManager extends JavaPlugin implements Listener{
     }
 
     public void shutdown() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            PlayerInjector.uninjectPlayer(player);
-        }
+        //do stuff
     }
 
     private void updatePlayer(Player player) {
