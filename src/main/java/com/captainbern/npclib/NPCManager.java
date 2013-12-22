@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class NPCManager extends JavaPlugin implements Listener{
@@ -88,6 +89,10 @@ public class NPCManager extends JavaPlugin implements Listener{
         return id;
     }
 
+    /**
+     * This should never be used by a plugin using this lib.
+     * @return
+     */
     public static NPCManager getInstance() {
         if(INSTANCE == null) {
             LOGGER.warning("INSTANCE is NULL!");
@@ -152,6 +157,14 @@ public class NPCManager extends JavaPlugin implements Listener{
 
     public void despawn(int id) {
         LOOKUP.get(id).despawn();
+    }
+
+    public static NPCManager getNPCManager(Plugin plugin) {
+        if(INSTANCE == null) {
+            LOGGER.warning("NPC-Lib is disabled! Cannot return a valid NPCManager!");
+            return null;
+        }
+        return INSTANCE;
     }
 
     @EventHandler

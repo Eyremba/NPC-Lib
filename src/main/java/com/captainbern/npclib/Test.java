@@ -17,7 +17,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
 /**
- * An example class of how this lib can be used.
+ * An example class of how this lib can be used. This example will spawn
+ * a Human npc at the location where a player spawns.
+ *
+ * When left clicking the npc it will block/stop blocking and when right clicking
+ * it will define if the item is a wearable armor item, if so then it will wear it,
+ * if not then it will just hold the item in hand.
  */
 public class Test extends JavaPlugin implements Listener {
 
@@ -25,9 +30,9 @@ public class Test extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        //manager = new NPCManager(this);
+        manager = NPCManager.getNPCManager(this);
 
-        //Bukkit.getPluginManager().registerEvents(this, this);
+        Bukkit.getPluginManager().registerEvents(this, this);
     }
 
     @Override

@@ -3,11 +3,13 @@ package com.captainbern.npclib.events;
 import com.captainbern.npclib.npc.NPC;
 import com.captainbern.npclib.utils.Action;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayerInteractNPCEvent extends Event {
+public class PlayerInteractNPCEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
+    private boolean cancelled;
 
     private final NPC npc;
     private final Action action;
@@ -29,6 +31,14 @@ public class PlayerInteractNPCEvent extends Event {
 
     public NPC getNPC() {
         return npc;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean flag) {
+        this.cancelled = flag;
     }
 
     public HandlerList getHandlers() {
