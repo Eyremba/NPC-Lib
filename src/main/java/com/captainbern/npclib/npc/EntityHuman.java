@@ -1,13 +1,17 @@
 package com.captainbern.npclib.npc;
 
 import com.captainbern.npclib.NPCManager;
+import com.captainbern.npclib.utils.EntityUtil;
 import com.captainbern.npclib.utils.PacketFactory;
+import com.captainbern.npclib.utils.WorldUtil;
 import com.captainbern.npclib.wrappers.DataWatcher;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 public class EntityHuman implements NPC {
 
@@ -185,9 +189,6 @@ public class EntityHuman implements NPC {
      */
     @Override
     public void lookAt(Location point) {
-        // Location newLoc = new Location(location.getWorld(), getLocation().getX(), getLocation().getY(), getLocation().getZ());
-        // newLoc.setPitch(location.getPitch());
-        // newLoc.setYaw(location.getYaw());
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftHeadRotationPacket(this, location.getYaw()));
 
         if (getLocation().getWorld() != point.getWorld()) {
@@ -246,5 +247,50 @@ public class EntityHuman implements NPC {
         dataWatcher.write(8, (byte) 0);
 
         setDataWatcher(dataWatcher);
+    }
+
+    /**
+     * Needs some testing.
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
+        Object world = WorldUtil.getHandle(getLocation().getWorld());
+        Object entity = null;
+
+        if(EntityUtil.ENTITY_SNOWBALL.isAssignableFrom(projectile)) {
+            entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_SNOWBALL, world);
+
+        }else if(EntityUtil.ENTITY_EGG.isAssignableFrom(projectile)) {
+            entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_EGG, world);
+
+        }else if(EntityUtil.ENTITY_ENDERPEARL.isAssignableFrom(projectile)) {
+            entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_ENDERPEARL, world);
+
+        }else if(EntityUtil.ENTITY_ARROW.isAssignableFrom(projectile)) {
+            entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_ARROW, world);
+
+        }else if(EntityUtil.ENTITY_POTION.isAssignableFrom(projectile)) {
+            entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_POTION, world);
+
+        }else if(EntityUtil.FIREBALL.isAssignableFrom(projectile)) {
+
+            if(EntityUtil.ENTITY_SMALL_FIREBALL.isAssignableFrom(projectile)) {
+                entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_SMALL_FIREBALL, world);
+            }else if(EntityUtil.ENTITY_WITHERSKULL.isAssignableFrom(projectile)) {
+                entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_WITHERSKULL, world);
+            }else {
+                //ENTITY_LARGE_FIREBALL
+                entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_LARGE_FIREBALL, world);
+            }
+        }
+
+        Location location = getEyeLocation();
+        Vector direction = location.getDirection().multiply(10);
+
+        EntityUtil.setPositionRotation(entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+
+        EntityUtil.addEntity(world, entity);
+        return EntityUtil.getBukkitEntity(entity);
     }
 }

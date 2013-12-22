@@ -4,6 +4,7 @@ import com.captainbern.npclib.NPCManager;
 import org.bukkit.Bukkit;
 import sun.reflect.MethodAccessor;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,8 +31,8 @@ public class ReflectionUtil {
             return Class.forName(name);
         } catch (ClassNotFoundException e) {
             NPCManager.LOGGER.warning("Could not find class: " + name + "!");
-            return null;
         }
+        return null;
     }
 
     public static Class getNMSClass(String className) {
@@ -57,8 +58,8 @@ public class ReflectionUtil {
             return field;
         } catch (NoSuchFieldException e) {
             NPCManager.LOGGER.warning("No such field: " + fieldName + "!");
-            return null;
         }
+        return null;
     }
 
     public static <T> T getField(Class<?> clazz, String fieldName, Object instance) {
@@ -66,8 +67,8 @@ public class ReflectionUtil {
             return (T) getField(clazz, fieldName).get(instance);
         } catch (IllegalAccessException e) {
             NPCManager.LOGGER.warning("Failed to access field: " + fieldName + "!");
-            return null;
         }
+        return null;
     }
 
     public static void setField(Class<?> clazz, String fieldName, Object instance, Object value) {
@@ -93,8 +94,8 @@ public class ReflectionUtil {
             return method;
         } catch (NoSuchMethodException e) {
             NPCManager.LOGGER.warning("No such method: " + methodName + "!");
-            return null;
         }
+        return null;
     }
 
     public static <T> T invokeMethod(Method method, Object instance, Object... args) {
@@ -102,11 +103,37 @@ public class ReflectionUtil {
             return (T) method.invoke(instance, args);
         } catch (IllegalAccessException e) {
             NPCManager.LOGGER.warning("Failed to access method: " + method.getName() + "!");
-            return null;
         } catch (InvocationTargetException e) {
             NPCManager.LOGGER.warning("Failed to invoke method: " + method.getName() + "!");
-            e.printStackTrace();
-            return null;
         }
+        return null;
+    }
+
+    public static Constructor getConstructor(Class<?> clazz, Class<?>... params) {
+        try {
+            Constructor constructor = clazz.getConstructor(params);
+
+            if(!constructor.isAccessible()) {
+                constructor.setAccessible(true);
+            }
+
+            return constructor;
+        } catch (NoSuchMethodException e) {
+            NPCManager.LOGGER.warning("No such constructor!");
+        }
+        return null;
+    }
+
+    public static <T> T invokeConstructor(Constructor constructor, Object... args) {
+        try {
+            return (T) constructor.newInstance(args);
+        } catch (InstantiationException e) {
+            NPCManager.LOGGER.warning("Failed to instantiate constructor: " + constructor.getName());
+        } catch (IllegalAccessException e) {
+            NPCManager.LOGGER.warning("failed to access constructor: " + constructor.getName());
+        } catch (InvocationTargetException e) {
+            NPCManager.LOGGER.warning("Failed to invoke constructor: " + constructor.getName());
+        }
+        return null;
     }
 }

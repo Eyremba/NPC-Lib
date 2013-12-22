@@ -3,6 +3,7 @@ package com.captainbern.npclib.npc;
 import com.captainbern.npclib.wrappers.DataWatcher;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.Location;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 
 public interface NPC {
@@ -56,5 +57,7 @@ public interface NPC {
     public double getEyeHeight(boolean ignoreSneaking);
 
     public void reset();
+
+    public <T extends Projectile> T launchProjectile(Class<? extends T> projectile);
 
 }
