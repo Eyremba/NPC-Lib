@@ -13,6 +13,8 @@ public interface NPC {
 
     public Location getLocation();
 
+    public Location getEyeLocation();
+
     public ItemStack getInventory(SlotType type);
 
     public void setName(String name);
@@ -48,6 +50,10 @@ public interface NPC {
     public void lookAt(Location location);
 
     public void walkTo(Location location);
+
+    public double getEyeHeight();
+
+    public double getEyeHeight(boolean ignoreSneaking);
 
     public void reset();
 

@@ -55,6 +55,13 @@ public class EntityHuman implements NPC {
     }
 
     @Override
+    public Location getEyeLocation() {
+        Location location = getLocation();
+        location.setY(location.getY() + getEyeHeight());
+        return location;
+    }
+
+    @Override
     public ItemStack getInventory(SlotType type) {
         switch (type) {
             case ITEM_IN_HAND : return this.itemInHand;
@@ -171,18 +178,60 @@ public class EntityHuman implements NPC {
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftDestroyPacket(this));
     }
 
+    /**
+     * Need to finish this part.
+     * Code taken from TopCat NPC-Lib.
+     * @param point
+     */
     @Override
-    public void lookAt(Location location) {
-       // Location newLoc = new Location(location.getWorld(), getLocation().getX(), getLocation().getY(), getLocation().getZ());
-       // newLoc.setPitch(location.getPitch());
-       // newLoc.setYaw(location.getYaw());
+    public void lookAt(Location point) {
+        // Location newLoc = new Location(location.getWorld(), getLocation().getX(), getLocation().getY(), getLocation().getZ());
+        // newLoc.setPitch(location.getPitch());
+        // newLoc.setYaw(location.getYaw());
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftHeadRotationPacket(this, location.getYaw()));
+
+        if (getLocation().getWorld() != point.getWorld()) {
+            return;
+        }
+        final Location npcLoc = getEyeLocation();
+        final double xDiff = point.getX() - getLocation().getX();
+        final double yDiff = point.getY() - getLocation().getY();
+        final double zDiff = point.getZ() - getLocation().getZ();
+        final double DistanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
+        final double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + yDiff * yDiff);
+        double newYaw = Math.acos(xDiff / DistanceXZ) * 180 / Math.PI;
+        final double newPitch = Math.acos(yDiff / DistanceY) * 180 / Math.PI - 90;
+        if (zDiff < 0.0) {
+            newYaw = newYaw + Math.abs(180 - newYaw) * 2;
+        }
+        getLocation().setYaw((float) (newYaw - 90));
+        getLocation().setPitch((float) newPitch);
+        //((EntityPlayer) getEntity()).aP = (float) (newYaw - 90);
     }
 
+    //doesn't work properly
     @Override
     public void walkTo(Location location) {
         this.location = location;
         NPCManager.getInstance().updateNPC(this, PacketFactory.craftLookMovePacket(this, location));
+    }
+
+    @Override
+    public double getEyeHeight() {
+        return getEyeHeight(false);
+    }
+
+    @Override
+    public double getEyeHeight(boolean ignoreSneaking) {
+        if (ignoreSneaking) {
+            return 1.62D;
+        } else {
+            if (isCrouching()) {
+                return 1.54D;
+            } else {
+                return 1.62D;
+            }
+        }
     }
 
     @Override
