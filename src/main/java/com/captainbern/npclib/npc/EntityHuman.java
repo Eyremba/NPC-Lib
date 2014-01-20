@@ -265,7 +265,7 @@ public class EntityHuman implements NPC {
     }
 
     /**
-     * Needs some testing.
+     * Needs some testing. Someone test this please.
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -295,7 +295,6 @@ public class EntityHuman implements NPC {
             }else if(EntityUtil.ENTITY_WITHERSKULL.isAssignableFrom(projectile)) {
                 entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_WITHERSKULL, world);
             }else {
-                //ENTITY_LARGE_FIREBALL
                 entity = EntityUtil.invokeProjectile(EntityUtil.ENTITY_LARGE_FIREBALL, world);
             }
         }

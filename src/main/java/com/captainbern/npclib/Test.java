@@ -59,34 +59,41 @@ public class Test extends JavaPlugin implements Listener {
         }
     }
 
-    public static SlotType getTypeFor(ItemStack stack) {
-        List<Material> HELMETS = Lists.newArrayList();
+    static List<Material> HELMETS = Lists.newArrayList();
+    static List<Material> CHESTPLATES = Lists.newArrayList();
+    static List<Material> PANTS = Lists.newArrayList();
+    static List<Material> SHOES = Lists.newArrayList();
+
+    {
         HELMETS.add(Material.LEATHER_HELMET);
         HELMETS.add(Material.CHAINMAIL_HELMET);
         HELMETS.add(Material.IRON_HELMET);
         HELMETS.add(Material.GOLD_HELMET);
         HELMETS.add(Material.DIAMOND_HELMET);
 
-        List<Material> CHESTPLATES = Lists.newArrayList();
         CHESTPLATES.add(Material.LEATHER_CHESTPLATE);
         CHESTPLATES.add(Material.CHAINMAIL_CHESTPLATE);
         CHESTPLATES.add(Material.IRON_CHESTPLATE);
         CHESTPLATES.add(Material.GOLD_CHESTPLATE);
         CHESTPLATES.add(Material.DIAMOND_CHESTPLATE);
 
-        List<Material> PANTS = Lists.newArrayList();
+
         PANTS.add(Material.LEATHER_LEGGINGS);
         PANTS.add(Material.CHAINMAIL_LEGGINGS);
         PANTS.add(Material.IRON_LEGGINGS);
         PANTS.add(Material.GOLD_LEGGINGS);
         PANTS.add(Material.DIAMOND_LEGGINGS);
 
-        List<Material> SHOES = Lists.newArrayList();
+
         SHOES.add(Material.LEATHER_BOOTS);
         SHOES.add(Material.CHAINMAIL_BOOTS);
         SHOES.add(Material.IRON_BOOTS);
         SHOES.add(Material.GOLD_BOOTS);
         SHOES.add(Material.DIAMOND_BOOTS);
+    }
+
+    public static SlotType getTypeFor(ItemStack stack) {
+
 
         Material material = stack.getType();
 
