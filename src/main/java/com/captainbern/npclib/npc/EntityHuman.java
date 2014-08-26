@@ -14,6 +14,8 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.UUID;
+
 public class EntityHuman implements NPC {
 
     private final int id;
@@ -33,7 +35,7 @@ public class EntityHuman implements NPC {
     public EntityHuman(Location location, String name, int id) {
         this.location = location;
         this.id = id;
-        this.profile = new GameProfile("NPC", name);
+        this.profile = new GameProfile(UUID.nameUUIDFromBytes(("NPC:" + name).getBytes()), name);
         this.itemInHand = new ItemStack(Material.AIR);
 
         this.dataWatcher = new DataWatcher();
@@ -80,7 +82,7 @@ public class EntityHuman implements NPC {
 
     @Override
     public void setName(String name) {
-        profile = new GameProfile("NPC", name);
+        profile = new GameProfile(UUID.nameUUIDFromBytes(("NPC:" + name).getBytes()), name);
         NPCManager.getInstance().updateNPC(this);
     }
 
